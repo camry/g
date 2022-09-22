@@ -40,8 +40,7 @@ func Caller(depth int) Valuer {
             depth++
             _, file, line, _ = runtime.Caller(depth)
         }
-        idx := strings.LastIndexByte(file, '/')
-        return file[idx+1:] + ":" + strconv.Itoa(line)
+        return file + ":" + strconv.Itoa(line)
     }
 }
 
