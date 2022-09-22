@@ -32,11 +32,11 @@ func Value(ctx context.Context, v any) any {
 func Caller(depth int) Valuer {
     return func(context.Context) any {
         _, file, line, _ := runtime.Caller(depth)
-        if strings.LastIndex(file, "/g/glog/filter.go") > 0 {
+        if strings.LastIndex(file, "/glog/filter.go") > 0 {
             depth++
             _, file, line, _ = runtime.Caller(depth)
         }
-        if strings.LastIndex(file, "/g/glog/helper.go") > 0 {
+        if strings.LastIndex(file, "/glog/helper.go") > 0 {
             depth++
             _, file, line, _ = runtime.Caller(depth)
         }
