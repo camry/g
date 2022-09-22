@@ -36,6 +36,10 @@ func Caller(depth int) Valuer {
             depth++
             _, file, line, _ = runtime.Caller(depth)
         }
+        if strings.LastIndex(file, "/glog/global.go") > 0 {
+            depth++
+            _, file, line, _ = runtime.Caller(depth)
+        }
         if strings.LastIndex(file, "/glog/helper.go") > 0 {
             depth++
             _, file, line, _ = runtime.Caller(depth)
