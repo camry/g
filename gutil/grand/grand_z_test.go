@@ -19,15 +19,14 @@ func TestGRand_Hit(t *testing.T) {
     for i := 0; i < 10; i++ {
         assert.True(t, gutil.InArray(r.Hit(50, 100), []bool{true, false}))
     }
-    rt := grand.NewRand(100000000, 3)
     for i := 0; i < 1000; i++ {
-        assert.True(t, rt.Hit(100, 100))
+        assert.True(t, r.Hit(100, 100, 3))
     }
     for i := 0; i < 1000; i++ {
-        assert.False(t, rt.Hit(0, 100))
+        assert.False(t, r.Hit(0, 100, 3))
     }
     for i := 0; i < 100; i++ {
-        assert.True(t, gutil.InArray(rt.Hit(50, 100), []bool{true, false}))
+        assert.True(t, gutil.InArray(r.Hit(50, 100, 3), []bool{true, false}))
     }
 }
 
@@ -42,14 +41,13 @@ func TestGRand_HitProb(t *testing.T) {
     for i := 0; i < 100; i++ {
         assert.True(t, gutil.InArray(r.HitProb(0.5), []bool{true, false}))
     }
-    rt := grand.NewRand(100000000, 3)
     for i := 0; i < 100; i++ {
-        assert.True(t, rt.HitProb(1))
+        assert.True(t, r.HitProb(1, 3))
     }
     for i := 0; i < 100; i++ {
-        assert.False(t, rt.HitProb(0))
+        assert.False(t, r.HitProb(0, 3))
     }
     for i := 0; i < 100; i++ {
-        assert.True(t, gutil.InArray(rt.HitProb(0.5), []bool{true, false}))
+        assert.True(t, gutil.InArray(r.HitProb(0.5, 3), []bool{true, false}))
     }
 }
