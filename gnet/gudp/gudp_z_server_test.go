@@ -75,7 +75,7 @@ func TestNewServer(t *testing.T) {
         }
     })
     go s.Run(ctx)
-    defer s.Stop(ctx)
+    defer s.Close(ctx)
     time.Sleep(100 * time.Millisecond)
 
     // gudp.Conn.Send
