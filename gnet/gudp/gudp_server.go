@@ -11,9 +11,9 @@ import (
 // Server 定义 UDP 服务器。
 type Server struct {
     mu      sync.Mutex  // 用于 Server.Conn 并发安全。
-    conn    *Conn       // UDP 服务器连接对象
+    conn    *Conn       // UDP 服务器连接对象。
     network string      // UDP 服务器网络协议。
-    address string      // UDP 服务器监听地址
+    address string      // UDP 服务器监听地址。
     handler func(*Conn) // UDP 连接的处理程序。
 }
 
