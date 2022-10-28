@@ -56,3 +56,8 @@ func (s *Server) Stop(ctx context.Context) error {
     defer s.mu.Unlock()
     return s.conn.Close()
 }
+
+// Conn UDP 服务器连接对象
+func (s *Server) Conn() *Conn {
+    return s.conn
+}
