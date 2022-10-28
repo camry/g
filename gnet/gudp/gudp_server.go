@@ -50,8 +50,8 @@ func (s *Server) Run(ctx context.Context) (err error) {
     return nil
 }
 
-// Stop 停止 UDP 服务器。
-func (s *Server) Stop(ctx context.Context) error {
+// Close 关闭 UDP 服务器。
+func (s *Server) Close(ctx context.Context) error {
     s.mu.Lock()
     defer s.mu.Unlock()
     return s.conn.Close()
