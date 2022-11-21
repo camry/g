@@ -3,12 +3,13 @@ package gtcp
 import (
     "context"
     "crypto/tls"
+    "errors"
     "fmt"
+    "github.com/camry/g/gerrors/gcode"
     "net"
     "strings"
     "sync"
 
-    "github.com/camry/g/gerrors/gcode"
     "github.com/camry/g/gerrors/gerror"
 )
 
@@ -19,6 +20,7 @@ const (
 
 // Server 定义 TCP 服务包装器。
 type Server struct {
+    err       error
     mu        sync.Mutex   // 用于 Server.listen 并发安全。
     listen    net.Listener // 网络监听器。
     network   string       // 服务器网络协议。
@@ -35,21 +37,12 @@ func NewServer(address string, handler func(*Conn), tlsConfig *tls.Config) *Serv
         handler:   handler,
         tlsConfig: tlsConfig,
     }
+    srv.err = srv.listener()
     return srv
 }
 
-// Close 关闭 TCP 服务器。
-func (s *Server) Close(ctx context.Context) error {
-    s.mu.Lock()
-    defer s.mu.Unlock()
-    if s.listen == nil {
-        return nil
-    }
-    return s.listen.Close()
-}
-
-// Run 启动 TCP 服务器。
-func (s *Server) Run(ctx context.Context) (err error) {
+// listener 网络监听器。
+func (s *Server) listener() (err error) {
     if s.handler == nil {
         err = gerror.NewCode(gcode.CodeMissingConfiguration, "start running failed: socket handler not defined")
         return
@@ -77,6 +70,32 @@ func (s *Server) Run(ctx context.Context) (err error) {
             err = gerror.Wrapf(err, `net.ListenTCP failed for address "%s"`, s.address)
             return err
         }
+    }
+    return nil
+}
+
+// Close 关闭 TCP 服务器。
+func (s *Server) Close(ctx context.Context) error {
+    s.mu.Lock()
+    defer s.mu.Unlock()
+    if s.listen == nil {
+        return nil
+    }
+    return s.listen.Close()
+}
+
+// Run 启动 TCP 服务器。
+func (s *Server) Run(ctx context.Context) (err error) {
+    if s.err != nil {
+        return s.err
+    }
+    if s.listen == nil {
+        err = errors.New("gtcp start running failed: socket Listener not defined")
+        return
+    }
+    if s.handler == nil {
+        err = errors.New("gtcp start running failed: socket handler not defined")
+        return
     }
     // Listening loop.
     for {

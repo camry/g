@@ -3,11 +3,11 @@ package gudp
 import (
     "context"
     "fmt"
+    "github.com/camry/g/gerrors/gcode"
     "net"
     "strings"
     "sync"
 
-    "github.com/camry/g/gerrors/gcode"
     "github.com/camry/g/gerrors/gerror"
 )
 
@@ -18,6 +18,7 @@ const (
 
 // Server 定义 UDP 服务器。
 type Server struct {
+    err     error
     mu      sync.Mutex  // 用于 Server.Conn 并发安全。
     conn    *Conn       // UDP 服务器连接对象。
     network string      // UDP 服务器网络协议。
@@ -32,7 +33,30 @@ func NewServer(address string, handler func(*Conn)) *Server {
         address: address,
         handler: handler,
     }
+    srv.err = srv.listener()
     return srv
+}
+
+// listener 网络监听器。
+func (s *Server) listener() (err error) {
+    if s.handler == nil {
+        err := gerror.NewCode(gcode.CodeMissingConfiguration, "start running failed: socket handler not defined")
+        return err
+    }
+    addr, err := net.ResolveUDPAddr(s.network, s.address)
+    if err != nil {
+        err = gerror.Wrapf(err, `net.ResolveUDPAddr failed for address "%s"`, s.address)
+        return err
+    }
+    conn, err := net.ListenUDP(s.network, addr)
+    if err != nil {
+        err = gerror.Wrapf(err, `net.ListenUDP failed for address "%s"`, s.address)
+        return err
+    }
+    s.mu.Lock()
+    s.conn = NewConnByNetConn(conn)
+    s.mu.Unlock()
+    return nil
 }
 
 // Close 关闭 UDP 服务器。
@@ -48,23 +72,9 @@ func (s *Server) Close(ctx context.Context) (err error) {
 
 // Run 启动 UDP 服务器。
 func (s *Server) Run(ctx context.Context) (err error) {
-    if s.handler == nil {
-        err := gerror.NewCode(gcode.CodeMissingConfiguration, "start running failed: socket handler not defined")
-        return err
+    if s.err != nil {
+        return s.err
     }
-    addr, err := net.ResolveUDPAddr("udp", s.address)
-    if err != nil {
-        err = gerror.Wrapf(err, `net.ResolveUDPAddr failed for address "%s"`, s.address)
-        return err
-    }
-    conn, err := net.ListenUDP("udp", addr)
-    if err != nil {
-        err = gerror.Wrapf(err, `net.ListenUDP failed for address "%s"`, s.address)
-        return err
-    }
-    s.mu.Lock()
-    s.conn = NewConnByNetConn(conn)
-    s.mu.Unlock()
     s.handler(s.conn)
     return nil
 }
