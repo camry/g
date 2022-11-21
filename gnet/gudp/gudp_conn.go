@@ -1,10 +1,11 @@
 package gudp
 
 import (
-    "github.com/camry/g/gerrors/gerror"
     "io"
     "net"
     "time"
+
+    "github.com/camry/g/gerrors/gerror"
 )
 
 // Conn 处理 UDP 连接。

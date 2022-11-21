@@ -2,9 +2,10 @@ package gtcp
 
 import (
     "crypto/tls"
-    "github.com/camry/g/gerrors/gerror"
     "net"
     "time"
+    
+    "github.com/camry/g/gerrors/gerror"
 )
 
 const (

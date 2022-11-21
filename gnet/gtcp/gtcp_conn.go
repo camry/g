@@ -4,10 +4,11 @@ import (
     "bufio"
     "bytes"
     "crypto/tls"
-    "github.com/camry/g/gerrors/gerror"
     "io"
     "net"
     "time"
+    
+    "github.com/camry/g/gerrors/gerror"
 )
 
 const (

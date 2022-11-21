@@ -3,11 +3,12 @@ package gudp
 import (
     "context"
     "fmt"
-    "github.com/camry/g/gerrors/gcode"
-    "github.com/camry/g/gerrors/gerror"
     "net"
     "strings"
     "sync"
+
+    "github.com/camry/g/gerrors/gcode"
+    "github.com/camry/g/gerrors/gerror"
 )
 
 const (

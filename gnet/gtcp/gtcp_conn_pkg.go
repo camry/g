@@ -2,9 +2,10 @@ package gtcp
 
 import (
     "encoding/binary"
+    "time"
+
     "github.com/camry/g/gerrors/gcode"
     "github.com/camry/g/gerrors/gerror"
-    "time"
 )
 
 const (
