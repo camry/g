@@ -1,7 +1,7 @@
 package gudp
 
 import (
-    "fmt"
+    "github.com/camry/g/gerrors/gerror"
     "net"
 )
 
@@ -15,21 +15,27 @@ func NewNetConn(remoteAddress string, localAddress ...string) (*net.UDPConn, err
     )
     remoteAddr, err = net.ResolveUDPAddr(network, remoteAddress)
     if err != nil {
-        return nil, fmt.Errorf(`net.ResolveUDPAddr failed for network "%s", address "%s"`,
+        return nil, gerror.Wrapf(
+            err,
+            `net.ResolveUDPAddr failed for network "%s", address "%s"`,
             network, remoteAddress,
         )
     }
     if len(localAddress) > 0 {
         localAddr, err = net.ResolveUDPAddr(network, localAddress[0])
         if err != nil {
-            return nil, fmt.Errorf(`net.ResolveUDPAddr failed for network "%s", address "%s"`,
+            return nil, gerror.Wrapf(
+                err,
+                `net.ResolveUDPAddr failed for network "%s", address "%s"`,
                 network, localAddress[0],
             )
         }
     }
     conn, err := net.DialUDP(network, localAddr, remoteAddr)
     if err != nil {
-        return nil, fmt.Errorf(`net.DialUDP failed for network "%s", local "%s", remote "%s"`,
+        return nil, gerror.Wrapf(
+            err,
+            `net.DialUDP failed for network "%s", local "%s", remote "%s"`,
             network, localAddr.String(), remoteAddr.String(),
         )
     }
@@ -66,13 +72,17 @@ func GetFreePort() (port int, err error) {
     )
     resolvedAddr, err := net.ResolveUDPAddr(network, address)
     if err != nil {
-        return 0, fmt.Errorf(`net.ResolveUDPAddr failed for network "%s", address "%s"`,
+        return 0, gerror.Wrapf(
+            err,
+            `net.ResolveUDPAddr failed for network "%s", address "%s"`,
             network, address,
         )
     }
     l, err := net.ListenUDP(network, resolvedAddr)
     if err != nil {
-        return 0, fmt.Errorf(`net.ListenUDP failed for network "%s", address "%s"`,
+        return 0, gerror.Wrapf(
+            err,
+            `net.ListenUDP failed for network "%s", address "%s"`,
             network, resolvedAddr.String(),
         )
     }
@@ -90,13 +100,17 @@ func GetFreePorts(count int) (ports []int, err error) {
     for i := 0; i < count; i++ {
         resolvedAddr, err := net.ResolveUDPAddr(network, address)
         if err != nil {
-            return nil, fmt.Errorf(`net.ResolveUDPAddr failed for network "%s", address "%s"`,
+            return nil, gerror.Wrapf(
+                err,
+                `net.ResolveUDPAddr failed for network "%s", address "%s"`,
                 network, address,
             )
         }
         l, err := net.ListenUDP(network, resolvedAddr)
         if err != nil {
-            return nil, fmt.Errorf(`net.ListenUDP failed for network "%s", address "%s"`,
+            return nil, gerror.Wrapf(
+                err,
+                `net.ListenUDP failed for network "%s", address "%s"`,
                 network, resolvedAddr.String(),
             )
         }

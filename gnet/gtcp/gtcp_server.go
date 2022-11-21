@@ -12,7 +12,7 @@ import (
 )
 
 const (
-    // FreePortAddress 使用随机免费端口标记服务器监听。
+    // FreePortAddress 使用随机端口标记服务器监听。
     FreePortAddress = ":0"
 )
 
@@ -38,7 +38,7 @@ func NewServer(address string, handler func(*Conn), tlsConfig *tls.Config) *Serv
 }
 
 // Close 关闭 TCP 服务器。
-func (s *Server) Close() error {
+func (s *Server) Close(ctx context.Context) error {
     s.mu.Lock()
     defer s.mu.Unlock()
     if s.listen == nil {
@@ -56,7 +56,7 @@ func (s *Server) Run(ctx context.Context) (err error) {
     if s.tlsConfig != nil {
         // TLS Server
         s.mu.Lock()
-        s.listen, err = tls.Listen("tcp", s.address, s.tlsConfig)
+        s.listen, err = tls.Listen(s.network, s.address, s.tlsConfig)
         s.mu.Unlock()
         if err != nil {
             err = gerror.Wrapf(err, `tls.Listen failed for address "%s"`, s.address)
@@ -65,12 +65,12 @@ func (s *Server) Run(ctx context.Context) (err error) {
     } else {
         // Normal Server
         var tcpAddr *net.TCPAddr
-        if tcpAddr, err = net.ResolveTCPAddr("tcp", s.address); err != nil {
+        if tcpAddr, err = net.ResolveTCPAddr(s.network, s.address); err != nil {
             err = gerror.Wrapf(err, `net.ResolveTCPAddr failed for address "%s"`, s.address)
             return err
         }
         s.mu.Lock()
-        s.listen, err = net.ListenTCP("tcp", tcpAddr)
+        s.listen, err = net.ListenTCP(s.network, tcpAddr)
         s.mu.Unlock()
         if err != nil {
             err = gerror.Wrapf(err, `net.ListenTCP failed for address "%s"`, s.address)

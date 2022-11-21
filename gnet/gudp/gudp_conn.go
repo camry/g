@@ -1,8 +1,7 @@
 package gudp
 
 import (
-    "errors"
-    "fmt"
+    "github.com/camry/g/gerrors/gerror"
     "io"
     "net"
     "time"
@@ -63,7 +62,8 @@ func (c *Conn) Send(data []byte, retry ...Retry) (err error) {
             }
             // 即使重试后仍然失败。
             if len(retry) == 0 || retry[0].Count == 0 {
-                return errors.New("write data failed")
+                err = gerror.Wrap(err, `Write data failed`)
+                return err
             }
             if len(retry) > 0 {
                 retry[0].Count--
@@ -113,7 +113,7 @@ func (c *Conn) Receive(buffer int, retry ...Retry) ([]byte, error) {
                 time.Sleep(retry[0].Interval)
                 continue
             }
-            err = errors.New("ReadFromUDP failed")
+            err = gerror.Wrap(err, `ReadFromUDP failed`)
             break
         }
         break
@@ -164,7 +164,7 @@ func (c *Conn) SetDeadline(t time.Time) (err error) {
         c.receiveDeadline = t
         c.sendDeadline = t
     } else {
-        err = fmt.Errorf(`SetDeadline for connection failed with "%s"`, t)
+        err = gerror.Wrapf(err, `SetDeadline for connection failed with "%s"`, t)
     }
     return err
 }
@@ -173,7 +173,7 @@ func (c *Conn) SetReceiveDeadline(t time.Time) (err error) {
     if err = c.SetReadDeadline(t); err == nil {
         c.receiveDeadline = t
     } else {
-        err = fmt.Errorf(`SetReadDeadline for connection failed with "%s"`, t)
+        err = gerror.Wrapf(err, `SetReadDeadline for connection failed with "%s"`, t)
     }
     return err
 }
@@ -182,7 +182,7 @@ func (c *Conn) SetSendDeadline(t time.Time) (err error) {
     if err = c.SetWriteDeadline(t); err == nil {
         c.sendDeadline = t
     } else {
-        err = fmt.Errorf(`SetWriteDeadline for connection failed with "%s"`, t)
+        err = gerror.Wrapf(err, `SetWriteDeadline for connection failed with "%s"`, t)
     }
     return err
 }
