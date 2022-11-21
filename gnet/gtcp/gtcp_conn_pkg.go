@@ -2,7 +2,8 @@ package gtcp
 
 import (
     "encoding/binary"
-    "fmt"
+    "github.com/camry/g/gerrors/gcode"
+    "github.com/camry/g/gerrors/gerror"
     "time"
 )
 
@@ -39,7 +40,8 @@ func (c *Conn) SendPkg(data []byte, option ...PkgOption) error {
     }
     length := len(data)
     if length > pkgOption.MaxDataSize {
-        return fmt.Errorf(
+        return gerror.NewCodef(
+            gcode.CodeInvalidParameter,
             `data too long, data size %d exceeds allowed max data size %d`,
             length, pkgOption.MaxDataSize,
         )
@@ -111,7 +113,7 @@ func (c *Conn) ReceivePkg(option ...PkgOption) (result []byte, err error) {
     // 这里验证包的大小。
     // 如果验证失败，它会清除缓冲区并立即返回错误。
     if length < 0 || length > pkgOption.MaxDataSize {
-        return nil, fmt.Errorf(`invalid package size %d`, length)
+        return nil, gerror.NewCodef(gcode.CodeInvalidParameter, `invalid package size %d`, length)
     }
     // 空包。
     if length == 0 {
@@ -142,7 +144,8 @@ func getPkgOption(option ...PkgOption) (*PkgOption, error) {
         pkgOption.HeaderSize = pkgHeaderSizeDefault
     }
     if pkgOption.HeaderSize > pkgHeaderSizeMax {
-        return nil, fmt.Errorf(
+        return nil, gerror.NewCodef(
+            gcode.CodeInvalidParameter,
             `package header size %d definition exceeds max header size %d`,
             pkgOption.HeaderSize, pkgHeaderSizeMax,
         )
@@ -161,7 +164,8 @@ func getPkgOption(option ...PkgOption) (*PkgOption, error) {
         }
     }
     if pkgOption.MaxDataSize > 0x7FFFFFFF {
-        return nil, fmt.Errorf(
+        return nil, gerror.NewCodef(
+            gcode.CodeInvalidParameter,
             `package data size %d definition exceeds allowed max data size %d`,
             pkgOption.MaxDataSize, 0x7FFFFFFF,
         )

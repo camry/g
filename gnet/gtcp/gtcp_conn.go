@@ -4,8 +4,7 @@ import (
     "bufio"
     "bytes"
     "crypto/tls"
-    "errors"
-    "fmt"
+    "github.com/camry/g/gerrors/gerror"
     "io"
     "net"
     "time"
@@ -65,7 +64,7 @@ func (c *Conn) Send(data []byte, retry ...Retry) error {
             }
             // 即使重试后仍然失败。
             if len(retry) == 0 || retry[0].Count == 0 {
-                err = errors.New(`write data failed`)
+                err = gerror.Wrap(err, `Write data failed`)
                 return err
             }
             if len(retry) > 0 {
@@ -106,7 +105,7 @@ func (c *Conn) Receive(length int, retry ...Retry) ([]byte, error) {
         if length < 0 && index > 0 {
             bufferWait = true
             if err = c.SetReadDeadline(time.Now().Add(c.receiveBufferWait)); err != nil {
-                err = fmt.Errorf(`SetReadDeadline for connection failed`)
+                err = gerror.Wrap(err, `SetReadDeadline for connection failed`)
                 return nil, err
             }
         }
@@ -138,7 +137,7 @@ func (c *Conn) Receive(length int, retry ...Retry) ([]byte, error) {
             // 读取数据时重新设置超时。
             if bufferWait && isTimeout(err) {
                 if err = c.SetReadDeadline(c.receiveDeadline); err != nil {
-                    err = errors.New(`SetReadDeadline for connection failed`)
+                    err = gerror.Wrap(err, `SetReadDeadline for connection failed`)
                     return nil, err
                 }
                 err = nil
@@ -264,7 +263,7 @@ func (c *Conn) SetDeadline(t time.Time) (err error) {
         c.sendDeadline = t
     }
     if err != nil {
-        err = fmt.Errorf(`SetDeadline for connection failed with "%s"`, t)
+        err = gerror.Wrapf(err, `SetDeadline for connection failed with "%s"`, t)
     }
     return err
 }
@@ -274,7 +273,7 @@ func (c *Conn) SetReceiveDeadline(t time.Time) (err error) {
         c.receiveDeadline = t
     }
     if err != nil {
-        err = fmt.Errorf(`SetReadDeadline for connection failed with "%s"`, t)
+        err = gerror.Wrapf(err, `SetReadDeadline for connection failed with "%s"`, t)
     }
     return err
 }
@@ -284,7 +283,7 @@ func (c *Conn) SetSendDeadline(t time.Time) (err error) {
         c.sendDeadline = t
     }
     if err != nil {
-        err = fmt.Errorf(`SetWriteDeadline for connection failed with "%s"`, t)
+        err = gerror.Wrapf(err, `SetWriteDeadline for connection failed with "%s"`, t)
     }
     return err
 }

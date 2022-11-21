@@ -2,7 +2,7 @@ package gtcp
 
 import (
     "crypto/tls"
-    "fmt"
+    "github.com/camry/g/gerrors/gerror"
     "net"
     "time"
 )
@@ -30,7 +30,8 @@ func NewNetConn(address string, timeout ...time.Duration) (net.Conn, error) {
     }
     conn, err := net.DialTimeout(network, address, duration)
     if err != nil {
-        err = fmt.Errorf(
+        err = gerror.Wrapf(
+            err,
             `net.DialTimeout failed with network "%s", address "%s", timeout "%s"`,
             network, address, duration,
         )
@@ -52,7 +53,8 @@ func NewNetConnTLS(address string, tlsConfig *tls.Config, timeout ...time.Durati
     }
     conn, err := tls.DialWithDialer(dialer, network, address, tlsConfig)
     if err != nil {
-        err = fmt.Errorf(
+        err = gerror.Wrapf(
+            err,
             `tls.DialWithDialer failed with network "%s", address "%s", timeout "%s", tlsConfig "%v"`,
             network, address, dialer.Timeout, tlsConfig,
         )
@@ -132,21 +134,24 @@ func GetFreePort() (port int, err error) {
     )
     resolvedAddr, err := net.ResolveTCPAddr(network, address)
     if err != nil {
-        return 0, fmt.Errorf(
+        return 0, gerror.Wrapf(
+            err,
             `net.ResolveTCPAddr failed for network "%s", address "%s"`,
             network, address,
         )
     }
     l, err := net.ListenTCP(network, resolvedAddr)
     if err != nil {
-        return 0, fmt.Errorf(
+        return 0, gerror.Wrapf(
+            err,
             `net.ListenTCP failed for network "%s", address "%s"`,
             network, resolvedAddr.String(),
         )
     }
     port = l.Addr().(*net.TCPAddr).Port
     if err = l.Close(); err != nil {
-        err = fmt.Errorf(
+        err = gerror.Wrapf(
+            err,
             `close listening failed for network "%s", address "%s", port "%d"`,
             network, resolvedAddr.String(), port,
         )
@@ -163,14 +168,16 @@ func GetFreePorts(count int) (ports []int, err error) {
     for i := 0; i < count; i++ {
         resolvedAddr, err := net.ResolveTCPAddr(network, address)
         if err != nil {
-            return nil, fmt.Errorf(
+            return nil, gerror.Wrapf(
+                err,
                 `net.ResolveTCPAddr failed for network "%s", address "%s"`,
                 network, address,
             )
         }
         l, err := net.ListenTCP(network, resolvedAddr)
         if err != nil {
-            return nil, fmt.Errorf(
+            return nil, gerror.Wrapf(
+                err,
                 `net.ListenTCP failed for network "%s", address "%s"`,
                 network, resolvedAddr.String(),
             )
