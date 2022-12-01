@@ -2,12 +2,12 @@ package gtcp_test
 
 import (
     "context"
-    "github.com/stretchr/testify/assert"
     "strconv"
     "testing"
     "time"
 
     "github.com/camry/g/gnet/gtcp"
+    "github.com/stretchr/testify/assert"
 )
 
 func TestPackageBasic(t *testing.T) {
