@@ -143,13 +143,13 @@ func Test_Buffer(t *testing.T) {
     defer s.Close(ctx)
     time.Sleep(100 * time.Millisecond)
 
-    // result1, err1 := gudp.SendReceive(s.GetListenedAddress(), []byte("123"), -1)
-    // assert.Nil(t, err1)
-    // assert.Equal(t, string(result1), "1")
-    //
-    // result2, err2 := gudp.SendReceive(s.GetListenedAddress(), []byte("456"), -1)
-    // assert.Nil(t, err2)
-    // assert.Equal(t, string(result2), "4")
+    result1, err1 := gudp.SendReceive(s.GetListenedAddress(), []byte("123"), -1)
+    assert.Nil(t, err1)
+    assert.Equal(t, string(result1), "1")
+
+    result2, err2 := gudp.SendReceive(s.GetListenedAddress(), []byte("456"), -1)
+    assert.Nil(t, err2)
+    assert.Equal(t, string(result2), "4")
 }
 
 func Test_NewConn(t *testing.T) {
