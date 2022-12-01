@@ -30,7 +30,18 @@ type Server struct {
 }
 
 // NewServer 新建 TCP 服务器。
-func NewServer(address string, handler func(*Conn), tlsConfig *tls.Config) *Server {
+func NewServer(address string, handler func(*Conn)) *Server {
+    srv := &Server{
+        network: "tcp",
+        address: address,
+        handler: handler,
+    }
+    srv.err = srv.listener()
+    return srv
+}
+
+// NewServerTLS 新建 TCP TLS 服务器。
+func NewServerTLS(address string, tlsConfig *tls.Config, handler func(*Conn)) *Server {
     srv := &Server{
         network:   "tcp",
         address:   address,

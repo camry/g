@@ -30,7 +30,7 @@ func TestNewServer(t *testing.T) {
             }
             conn.Send(data)
         }
-    }, nil)
+    })
     go s.Run(ctx)
     time.Sleep(simpleTimeout)
     receive, err := gtcp.SendReceive(addr, sendData, -1)
@@ -57,7 +57,7 @@ func TestNewPkgServer(t *testing.T) {
             }
             conn.SendPkg(data)
         }
-    }, nil)
+    })
     go s.Run(ctx)
     time.Sleep(simpleTimeout)
     receive, err := gtcp.SendReceivePkg(addr, sendData)
