@@ -65,6 +65,15 @@ func SendReceive(address string, data []byte, receive int, retry ...Retry) ([]by
     return conn.SendReceive(data, receive, retry...)
 }
 
+// MustGetFreePort 执行 GetFreePort，但发生任何错误都会 panic。
+func MustGetFreePort() (port int) {
+    port, err := GetFreePort()
+    if err != nil {
+        panic(err)
+    }
+    return port
+}
+
 // GetFreePort 检索并返回一个空闲的端口。
 func GetFreePort() (port int, err error) {
     var (
