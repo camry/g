@@ -128,13 +128,14 @@ func Test_Buffer(t *testing.T) {
     s := gudp.NewServer(gudp.FreePortAddress, func(conn *gudp.Conn) {
         defer conn.Close()
         for {
-            data, err := conn.Receive(1)
+            data, err := conn.Receive(-1)
             if len(data) > 0 {
-                if err := conn.Send(data); err != nil {
+                if err := conn.Send(data[:1]); err != nil {
                     t.Error(gerror.Stack(err))
                 }
             }
             if err != nil {
+                t.Error(err)
                 break
             }
         }

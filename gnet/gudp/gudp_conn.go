@@ -80,20 +80,20 @@ func (c *Conn) Send(data []byte, retry ...Retry) (err error) {
 }
 
 // Receive 从远程地址接收和返回数据。
-func (c *Conn) Receive(buffer int, retry ...Retry) ([]byte, error) {
+func (c *Conn) Receive(length int, retry ...Retry) ([]byte, error) {
     var (
         err        error        // 读取错误
         size       int          // 读取大小
-        data       []byte       // 缓冲对象
+        buffer     []byte       // 缓冲对象
         remoteAddr *net.UDPAddr // 当前远程读取地址
     )
-    if buffer > 0 {
-        data = make([]byte, buffer)
+    if length > 0 {
+        buffer = make([]byte, length)
     } else {
-        data = make([]byte, defaultReadBufferSize)
+        buffer = make([]byte, defaultReadBufferSize)
     }
     for {
-        size, remoteAddr, err = c.ReadFromUDP(data)
+        size, remoteAddr, err = c.ReadFromUDP(buffer)
         if err == nil {
             c.remoteAddr = remoteAddr
         }
@@ -119,7 +119,7 @@ func (c *Conn) Receive(buffer int, retry ...Retry) ([]byte, error) {
         }
         break
     }
-    return data[:size], err
+    return buffer[:size], err
 }
 
 // SendReceive 将数据写入连接并阻止读取响应。
