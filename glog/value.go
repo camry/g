@@ -10,7 +10,7 @@ import (
 
 var (
     // DefaultCaller 是一个返回文件和行号的 Valuer。
-    DefaultCaller = Caller(3)
+    DefaultCaller = Caller(4)
 
     // DefaultTimestamp 是一个返回当前时间的 Valuer。
     DefaultTimestamp = Timestamp(time.RFC3339)
