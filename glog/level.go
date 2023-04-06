@@ -2,8 +2,11 @@ package glog
 
 import "strings"
 
-// Level 是日志级别类型。
+// Level 日志级别。
 type Level int8
+
+// LevelKey 日志级别 KEY。
+const LevelKey = "level"
 
 const (
     LevelDebug Level = iota - 1 // LevelDebug 是日志调试级别。
@@ -13,7 +16,10 @@ const (
     LevelFatal                  // LevelFatal 是日志致命级别。
 )
 
-// String 返回日志级别对应的字符串。
+func (l Level) Key() string {
+    return LevelKey
+}
+
 func (l Level) String() string {
     switch l {
     case LevelDebug:

@@ -1,6 +1,9 @@
 package glog
 
 import (
+    "context"
+    "fmt"
+    "os"
     "sync"
 )
 
@@ -11,7 +14,6 @@ var global = &loggerAppliance{}
 type loggerAppliance struct {
     lock sync.Mutex
     Logger
-    helper *Helper
 }
 
 // init 初始化全局默认 Logger。
@@ -24,12 +26,6 @@ func (a *loggerAppliance) SetLogger(in Logger) {
     a.lock.Lock()
     defer a.lock.Unlock()
     a.Logger = in
-    a.helper = NewHelper(a.Logger)
-}
-
-// GetLogger 获取 Logger。
-func (a *loggerAppliance) GetLogger() Logger {
-    return a.Logger
 }
 
 // SetLogger 应该在任何其他日志调用之前调用。
@@ -45,80 +41,88 @@ func GetLogger() Logger {
 
 // Log 按级别和键值打印日志。
 func Log(level Level, keyvals ...any) {
-    global.helper.Log(level, keyvals...)
+    _ = global.Log(level, keyvals...)
+}
+
+// Context 配置上下文 logger。
+func Context(ctx context.Context) *Helper {
+    return NewHelper(WithContext(ctx, global.Logger))
 }
 
 // Debug 打印调试级别的日志。
 func Debug(a ...any) {
-    global.helper.Debug(a...)
+    _ = global.Log(LevelDebug, DefaultMessageKey, fmt.Sprint(a...))
 }
 
 // Debugf 按 fmt.Sprintf 格式打印调试级别的日志。
 func Debugf(format string, a ...any) {
-    global.helper.Debugf(format, a...)
+    _ = global.Log(LevelDebug, DefaultMessageKey, fmt.Sprintf(format, a...))
 }
 
 // Debugw 按键值对打印调试级别的日志。
 func Debugw(keyvals ...any) {
-    global.helper.Debugw(keyvals...)
+    _ = global.Log(LevelDebug, keyvals...)
 }
 
 // Info 打印信息级别的日志。
 func Info(a ...any) {
-    global.helper.Info(a...)
+    _ = global.Log(LevelInfo, DefaultMessageKey, fmt.Sprint(a...))
 }
 
 // Infof 按 fmt.Sprintf 格式打印信息级别的日志。
 func Infof(format string, a ...any) {
-    global.helper.Infof(format, a...)
+    _ = global.Log(LevelInfo, DefaultMessageKey, fmt.Sprintf(format, a...))
 }
 
 // Infow 按键值对打印信息级别的日志。
 func Infow(keyvals ...any) {
-    global.helper.Infow(keyvals...)
+    _ = global.Log(LevelInfo, keyvals...)
 }
 
 // Warn 打印警告级别的日志。
 func Warn(a ...any) {
-    global.helper.Warn(a...)
+    _ = global.Log(LevelWarn, DefaultMessageKey, fmt.Sprint(a...))
 }
 
 // Warnf 按 fmt.Sprintf 格式打印警告级别的日志。
 func Warnf(format string, a ...any) {
-    global.helper.Warnf(format, a...)
+    _ = global.Log(LevelWarn, DefaultMessageKey, fmt.Sprintf(format, a...))
 }
 
 // Warnw 按键值对打印警告级别的日志。
 func Warnw(keyvals ...any) {
-    global.helper.Warnw(keyvals...)
+    _ = global.Log(LevelWarn, keyvals...)
 }
 
 // Error 打印错误级别的日志。
 func Error(a ...any) {
-    global.helper.Error(a...)
+    _ = global.Log(LevelError, DefaultMessageKey, fmt.Sprint(a...))
 }
 
 // Errorf 按 fmt.Sprintf 格式打印错误级别的日志。
 func Errorf(format string, a ...any) {
-    global.helper.Errorf(format, a...)
+    _ = global.Log(LevelError, DefaultMessageKey, fmt.Sprintf(format, a...))
 }
 
 // Errorw 按键值对打印错误级别的日志。
 func Errorw(keyvals ...any) {
-    global.helper.Errorw(keyvals...)
+    _ = global.Log(LevelError, keyvals...)
 }
 
 // Fatal 打印致命级别的日志。
 func Fatal(a ...any) {
-    global.helper.Fatal(a...)
+    _ = global.Log(LevelFatal, DefaultMessageKey, fmt.Sprint(a...))
+    os.Exit(1)
 }
 
 // Fatalf 按 fmt.Sprintf 格式打印致命级别的日志。
 func Fatalf(format string, a ...any) {
-    global.helper.Fatalf(format, a...)
+    _ = global.Log(LevelFatal, DefaultMessageKey, fmt.Sprintf(format, a...))
+    os.Exit(1)
 }
 
 // Fatalw 按键值对打印致命级别的日志。
 func Fatalw(keyvals ...any) {
-    global.helper.Fatalw(keyvals...)
+    _ = global.Log(LevelFatal, keyvals...)
+    os.Exit(1)
 }

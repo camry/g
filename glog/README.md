@@ -32,3 +32,28 @@ log.Info("info log")
 log.Warn("warn log")
 log.Error("warn log")
 ```
+
+## 第三方日志库
+
+### zap
+
+```shell
+go get -u github.com/go-kratos/kratos/contrib/log/zap/v2
+```
+### logrus
+
+```shell
+go get -u github.com/go-kratos/kratos/contrib/log/logrus/v2
+```
+
+### fluent
+
+```shell
+go get -u github.com/go-kratos/kratos/contrib/log/fluent/v2
+```
+
+### aliyun
+
+```shell
+go get -u github.com/go-kratos/kratos/contrib/log/aliyun/v2
+```

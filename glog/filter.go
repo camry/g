@@ -1,6 +1,6 @@
 package glog
 
-// FilterOption 是过滤器选项。
+// FilterOption 过滤器选项。
 type FilterOption func(*Filter)
 
 const fuzzyStr = "***"
@@ -65,19 +65,17 @@ func (f *Filter) Log(level Level, keyvals ...any) error {
         return nil
     }
     // fkv 用于提供一个切片来包含过滤器的前缀和键值对。
-    var fkv []any
-    if l, ok := f.logger.(*logger); ok {
-        if len(l.prefix) > 0 {
-            fkv = make([]any, 0, len(l.prefix)+len(keyvals))
-            fkv = append(fkv, l.prefix...)
-            fkv = append(fkv, keyvals...)
-        }
-    } else {
-        fkv = keyvals
+    var prefixkv []interface{}
+    l, ok := f.logger.(*logger)
+    if ok && len(l.prefix) > 0 {
+        prefixkv = make([]any, 0, len(l.prefix))
+        prefixkv = append(prefixkv, l.prefix...)
     }
-    if f.filter != nil && f.filter(level, fkv...) {
+
+    if f.filter != nil && (f.filter(level, prefixkv...) || f.filter(level, keyvals...)) {
         return nil
     }
+
     if len(f.key) > 0 || len(f.value) > 0 {
         for i := 0; i < len(keyvals); i += 2 {
             v := i + 1

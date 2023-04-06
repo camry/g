@@ -9,9 +9,8 @@ import (
 )
 
 var (
-    defaultDepth = 3
     // DefaultCaller 是一个返回文件和行号的 Valuer。
-    DefaultCaller = Caller(defaultDepth)
+    DefaultCaller = Caller(3)
 
     // DefaultTimestamp 是一个返回当前时间的 Valuer。
     DefaultTimestamp = Timestamp(time.RFC3339)
@@ -32,20 +31,12 @@ func Value(ctx context.Context, v any) any {
 func Caller(depth int) Valuer {
     return func(context.Context) any {
         _, file, line, _ := runtime.Caller(depth)
-        if strings.LastIndex(file, "/glog/filter.go") > 0 {
-            depth++
-            _, file, line, _ = runtime.Caller(depth)
+        idx := strings.LastIndexByte(file, '/')
+        if idx == -1 {
+            return file[idx+1:] + ":" + strconv.Itoa(line)
         }
-        if strings.LastIndex(file, "/glog/helper.go") > 0 {
-            depth++
-            _, file, line, _ = runtime.Caller(depth)
-        }
-        if strings.LastIndex(file, "/glog/global.go") > 0 {
-            depth++
-            _, file, line, _ = runtime.Caller(depth)
-            depth--
-        }
-        return file + ":" + strconv.Itoa(line)
+        idx = strings.LastIndexByte(file[:idx], '/')
+        return file[idx+1:] + ":" + strconv.Itoa(line)
     }
 }
 

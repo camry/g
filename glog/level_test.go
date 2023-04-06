@@ -1,8 +1,12 @@
 package glog
 
-import (
-    "testing"
-)
+import "testing"
+
+func TestLevel_Key(t *testing.T) {
+    if LevelInfo.Key() != LevelKey {
+        t.Errorf("want: %s, got: %s", LevelKey, LevelInfo.Key())
+    }
+}
 
 func TestLevel_String(t *testing.T) {
     tests := []struct {
