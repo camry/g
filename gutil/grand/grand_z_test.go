@@ -8,6 +8,18 @@ import (
     "github.com/stretchr/testify/assert"
 )
 
+func TestGRand_RangeInt(t *testing.T) {
+    r := grand.NewRand(100000000)
+    v1 := []int{1, 3, 3, 4, 9, 6, 2, 8, 9, 6}
+    for i := 0; i < 10; i++ {
+        assert.Equal(t, v1[i], r.RangeInt(0, 10))
+    }
+    v2 := []int{-17, -15, -15, -13, -12, -15, -13, -16, -10, -13, -11}
+    for i := 0; i < 10; i++ {
+        assert.Equal(t, v2[i], r.RangeInt(-20, -10))
+    }
+}
+
 func TestGRand_Hit(t *testing.T) {
     r := grand.NewRand(100000000)
     for i := 0; i < 100; i++ {
