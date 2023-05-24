@@ -40,7 +40,7 @@ var (
 
 // New 创建并返回错误码。
 // 注：返回错误码 Code 接口对象。
-func New(code int, message string, detail interface{}) Code {
+func New(code int, message string, detail any) Code {
     return localCode{
         code:    code,
         message: message,
@@ -49,7 +49,7 @@ func New(code int, message string, detail interface{}) Code {
 }
 
 // WithCode 根据指定的 Code 错误码创建并返回一个新的错误码。
-func WithCode(code Code, detail interface{}) Code {
+func WithCode(code Code, detail any) Code {
     return localCode{
         code:    code.Code(),
         message: code.Message(),

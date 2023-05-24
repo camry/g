@@ -22,7 +22,7 @@ type logger struct {
 
 // Log 按级别和键值打印日志。
 func (c *logger) Log(level Level, keyvals ...any) error {
-    kvs := make([]interface{}, 0, len(c.prefix)+len(keyvals))
+    kvs := make([]any, 0, len(c.prefix)+len(keyvals))
     kvs = append(kvs, c.prefix...)
     if c.hasValuer {
         bindValues(c.ctx, kvs)
@@ -37,7 +37,7 @@ func With(l Logger, kv ...any) Logger {
     if !ok {
         return &logger{logger: l, prefix: kv, hasValuer: containsValuer(kv), ctx: context.Background()}
     }
-    kvs := make([]interface{}, 0, len(c.prefix)+len(kv))
+    kvs := make([]any, 0, len(c.prefix)+len(kv))
     kvs = append(kvs, c.prefix...)
     kvs = append(kvs, kv...)
     return &logger{

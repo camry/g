@@ -65,7 +65,7 @@ func (f *Filter) Log(level Level, keyvals ...any) error {
         return nil
     }
     // fkv 用于提供一个切片来包含过滤器的前缀和键值对。
-    var prefixkv []interface{}
+    var prefixkv []any
     l, ok := f.logger.(*logger)
     if ok && len(l.prefix) > 0 {
         prefixkv = make([]any, 0, len(l.prefix))

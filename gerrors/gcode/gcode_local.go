@@ -20,7 +20,7 @@ func (c localCode) Message() string {
 }
 
 // Detail 错误码详细信息。
-func (c localCode) Detail() interface{} {
+func (c localCode) Detail() any {
     return c.detail
 }
 
