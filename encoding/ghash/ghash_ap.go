@@ -1,6 +1,6 @@
 package ghash
 
-// AP implements the classic AP hash algorithm for 32 bits.
+// AP 实现经典的 AP 哈希算法32位。
 func AP(str []byte) uint32 {
     var hash uint32
     for i := 0; i < len(str); i++ {
@@ -13,7 +13,7 @@ func AP(str []byte) uint32 {
     return hash
 }
 
-// AP64 implements the classic AP hash algorithm for 64 bits.
+// AP64 实现经典的 AP 哈希算法64位。
 func AP64(str []byte) uint64 {
     var hash uint64
     for i := 0; i < len(str); i++ {

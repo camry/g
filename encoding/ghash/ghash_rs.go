@@ -1,6 +1,6 @@
 package ghash
 
-// RS implements the classic RS hash algorithm for 32 bits.
+// RS 实现经典的 RS 哈希算法32位。
 func RS(str []byte) uint32 {
     var (
         b    uint32 = 378551
@@ -14,7 +14,7 @@ func RS(str []byte) uint32 {
     return hash
 }
 
-// RS64 implements the classic RS hash algorithm for 64 bits.
+// RS64 实现经典的 RS 哈希算法64位。
 func RS64(str []byte) uint64 {
     var (
         b    uint64 = 378551

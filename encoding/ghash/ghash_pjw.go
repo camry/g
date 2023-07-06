@@ -1,6 +1,6 @@
 package ghash
 
-// PJW implements the classic PJW hash algorithm for 32 bits.
+// PJW 实现经典的 PJW 哈希算法32位。
 func PJW(str []byte) uint32 {
     var (
         BitsInUnsignedInt uint32 = 32 // 4 * 8
@@ -19,7 +19,7 @@ func PJW(str []byte) uint32 {
     return hash
 }
 
-// PJW64 implements the classic PJW hash algorithm for 64 bits.
+// PJW64 实现经典的 PJW 哈希算法64位。
 func PJW64(str []byte) uint64 {
     var (
         BitsInUnsignedInt uint64 = 32 // 4 * 8

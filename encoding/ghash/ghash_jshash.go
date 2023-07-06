@@ -1,6 +1,6 @@
 package ghash
 
-// JS implements the classic JS hash algorithm for 32 bits.
+// JS 实现经典的 JS 哈希算法32位。
 func JS(str []byte) uint32 {
     var hash uint32 = 1315423911
     for i := 0; i < len(str); i++ {
@@ -9,7 +9,7 @@ func JS(str []byte) uint32 {
     return hash
 }
 
-// JS64 implements the classic JS hash algorithm for 64 bits.
+// JS64 实现经典的 JS 哈希算法64位。
 func JS64(str []byte) uint64 {
     var hash uint64 = 1315423911
     for i := 0; i < len(str); i++ {

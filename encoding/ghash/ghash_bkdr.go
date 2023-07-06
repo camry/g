@@ -1,6 +1,6 @@
 package ghash
 
-// BKDR implements the classic BKDR hash algorithm for 32 bits.
+// BKDR 实现经典的 BKDR 哈希算法32位。
 func BKDR(str []byte) uint32 {
     var (
         seed uint32 = 131 // 31 131 1313 13131 131313 etc..
@@ -12,7 +12,7 @@ func BKDR(str []byte) uint32 {
     return hash
 }
 
-// BKDR64 implements the classic BKDR hash algorithm for 64 bits.
+// BKDR64 实现经典的 BKDR 哈希算法64位。
 func BKDR64(str []byte) uint64 {
     var (
         seed uint64 = 131 // 31 131 1313 13131 131313 etc..
