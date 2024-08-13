@@ -9,8 +9,6 @@ import (
     "sync/atomic"
     "testing"
     "time"
-
-    "github.com/camry/g/glog"
 )
 
 const OneSecond = 1*time.Second + 50*time.Millisecond
@@ -36,7 +34,7 @@ func (sw *syncWriter) String() string {
 func TestFuncPanicRecovery(t *testing.T) {
     var buf syncWriter
     cron := New(WithParser(secondParser),
-        WithChain(Recover(glog.NewHelper(glog.NewStdLogger(&buf)))))
+        WithChain(Recover()))
     cron.Start()
     defer cron.Stop(context.Background())
     cron.AddFunc("* * * * * ?", func() {
@@ -63,7 +61,7 @@ func TestJobPanicRecovery(t *testing.T) {
 
     var buf syncWriter
     cron := New(WithParser(secondParser),
-        WithChain(Recover(glog.NewHelper(glog.NewStdLogger(&buf)))))
+        WithChain(Recover()))
     cron.Start()
     defer cron.Stop(context.Background())
     cron.AddJob("* * * * * ?", job)

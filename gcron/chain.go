@@ -1,9 +1,9 @@
 package gcron
 
 import (
-    "fmt"
-    "runtime"
+    "runtime/debug"
     "sync"
+    "time"
 
     "github.com/camry/g/glog"
 )
@@ -36,19 +36,13 @@ func (c Chain) Then(j Job) Job {
 }
 
 // Recover 使用日志记录器，记录包装任务中的 panic。
-func Recover(logger *glog.Helper) JobWrapper {
+func Recover() JobWrapper {
     return func(j Job) Job {
         return FuncJob(func() {
             defer func() {
                 if r := recover(); r != nil {
-                    const size = 64 << 10
-                    buf := make([]byte, size)
-                    buf = buf[:runtime.Stack(buf, false)]
-                    err, ok := r.(error)
-                    if !ok {
-                        err = fmt.Errorf("%v", r)
-                    }
-                    logger.Error(err, "panic", "stack", "...\n"+string(buf))
+                    glog.Errorf(`gcron Recover panic: %v`, r)
+                    glog.Errorf(`gcron Recover stack: %v`, string(debug.Stack()))
                 }
             }()
             j.Run()
@@ -57,23 +51,23 @@ func Recover(logger *glog.Helper) JobWrapper {
 }
 
 // DelayIfStillRunning 序列化作业，延迟后续运行，直到前一个完成。延迟超过一分钟后运行的作业会在信息中记录延迟。
-func DelayIfStillRunning(logger *glog.Helper) JobWrapper {
+func DelayIfStillRunning() JobWrapper {
     return func(j Job) Job {
         var mu sync.Mutex
         return FuncJob(func() {
-            // start := time.Now()
+            start := time.Now()
             mu.Lock()
             defer mu.Unlock()
-            // if dur := time.Since(start); dur > time.Minute {
-            //     logger.Infow(glog.DefaultMessageKey, "Cron", "action", "delay", "duration", dur)
-            // }
+            if dur := time.Since(start); dur > time.Minute {
+                glog.Debugw(glog.DefaultMessageKey, "Cron", "action", "delay", "duration", dur)
+            }
             j.Run()
         })
     }
 }
 
 // SkipIfStillRunning 如果先前的调用仍在运行，则跳过对 Job 的调用。它记录跳转到信息级别的给定记录器。
-func SkipIfStillRunning(logger *glog.Helper) JobWrapper {
+func SkipIfStillRunning() JobWrapper {
     return func(j Job) Job {
         var ch = make(chan struct{}, 1)
         ch <- struct{}{}
@@ -83,7 +77,7 @@ func SkipIfStillRunning(logger *glog.Helper) JobWrapper {
                 defer func() { ch <- v }()
                 j.Run()
             default:
-                // logger.Info("skip")
+                glog.Debug("skip")
             }
         })
     }
