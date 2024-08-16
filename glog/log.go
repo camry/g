@@ -6,7 +6,7 @@ import (
 )
 
 // DefaultLogger 默认日志记录器。
-var DefaultLogger Logger = NewStdLogger(log.Writer())
+var DefaultLogger = NewStdLogger(log.Writer())
 
 // Logger 是一个日志接口。
 type Logger interface {
@@ -50,16 +50,16 @@ func With(l Logger, kv ...any) Logger {
 
 // WithContext 返回被 l 的浅副本改变的上下文 ctx, 提供的 ctx 不能为空。
 func WithContext(ctx context.Context, l Logger) Logger {
-	switch v := l.(type) {
-	default:
-		return &logger{logger: l, ctx: ctx}
-	case *logger:
-		lv := *v
-		lv.ctx = ctx
-		return &lv
-	case *Filter:
-		fv := *v
-		fv.logger = WithContext(ctx, fv.logger)
-		return &fv
-	}
+    switch v := l.(type) {
+    default:
+        return &logger{logger: l, ctx: ctx}
+    case *logger:
+        lv := *v
+        lv.ctx = ctx
+        return &lv
+    case *Filter:
+        fv := *v
+        fv.logger = WithContext(ctx, fv.logger)
+        return &fv
+    }
 }
