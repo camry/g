@@ -50,14 +50,16 @@ func With(l Logger, kv ...any) Logger {
 
 // WithContext 返回被 l 的浅副本改变的上下文 ctx, 提供的 ctx 不能为空。
 func WithContext(ctx context.Context, l Logger) Logger {
-    c, ok := l.(*logger)
-    if !ok {
-        return &logger{logger: l, ctx: ctx}
-    }
-    return &logger{
-        logger:    c.logger,
-        prefix:    c.prefix,
-        hasValuer: c.hasValuer,
-        ctx:       ctx,
-    }
+	switch v := l.(type) {
+	default:
+		return &logger{logger: l, ctx: ctx}
+	case *logger:
+		lv := *v
+		lv.ctx = ctx
+		return &lv
+	case *Filter:
+		fv := *v
+		fv.logger = WithContext(ctx, fv.logger)
+		return &fv
+	}
 }
