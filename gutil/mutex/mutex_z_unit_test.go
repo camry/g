@@ -6,7 +6,7 @@ import (
 
     "github.com/stretchr/testify/assert"
 
-    "github.com/camry/g/internal/mutex"
+    "github.com/camry/g/gutil/mutex"
 )
 
 func TestMutexIsSafe(t *testing.T) {

@@ -3,7 +3,7 @@ package rwmutex_test
 import (
     "testing"
 
-    "github.com/camry/g/internal/rwmutex"
+    "github.com/camry/g/gutil/rwmutex"
 )
 
 var (
