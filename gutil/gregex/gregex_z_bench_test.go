@@ -9,15 +9,15 @@ import (
 
 var pattern = `(\w+).+\-\-\s*(.+)`
 
-var src = `GF is best! -- John`
+var src = `G is best! -- Camry`
 
-func Benchmark_GF_IsMatchString(b *testing.B) {
+func Benchmark_IsMatchString(b *testing.B) {
     for i := 0; i < b.N; i++ {
         gregex.IsMatchString(pattern, src)
     }
 }
 
-func Benchmark_GF_MatchString(b *testing.B) {
+func Benchmark_MatchString(b *testing.B) {
     for i := 0; i < b.N; i++ {
         gregex.MatchString(pattern, src)
     }
