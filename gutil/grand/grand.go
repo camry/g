@@ -2,22 +2,28 @@ package grand
 
 import (
     "math/rand"
+
+    "github.com/camry/g/gutil/mutex"
 )
 
 type GRand struct {
     *rand.Rand
+    mu *mutex.Mutex
 }
 
 // NewRand 新建种子随机数 GRand。
 // `seed` 随机种子值。
 func NewRand(seed int64) *GRand {
     return &GRand{
-        rand.New(rand.NewSource(seed)),
+        Rand: rand.New(rand.NewSource(seed)),
+        mu:   mutex.New(true),
     }
 }
 
 // RangeInt 随机整数方法返回 `min` 到 `max` 之间的随机整数，支持负数，包含边界，即：[min, max]。
 func (r *GRand) RangeInt(min, max int) int {
+    r.mu.Lock()
+    defer r.mu.Unlock()
     if min >= max {
         return min
     }
@@ -32,6 +38,11 @@ func (r *GRand) RangeInt(min, max int) int {
 // `randTimes` 取多少次随机值？(一般取3~5次)
 // 例如，Hit(1, 100)将会随机计算是否满足百分之一的概率。
 func (r *GRand) Hit(num, total int, randTimes ...int) bool {
+    r.mu.Lock()
+    defer r.mu.Unlock()
+    if num <= 0 || num > total {
+        return false
+    }
     rt := 1
     if len(randTimes) > 0 && randTimes[0] > 0 {
         rt = randTimes[0]
@@ -51,6 +62,11 @@ func (r *GRand) Hit(num, total int, randTimes ...int) bool {
 // `randTimes` 取多少次随机值？(一般取3~5次)
 // 例如，HitProb(0.005)将会随机计算是否满足千分之五的概率。
 func (r *GRand) HitProb(prob float32, randTimes ...int) bool {
+    r.mu.Lock()
+    defer r.mu.Unlock()
+    if prob <= 0 || prob > 1 {
+        return false
+    }
     rt := 1
     if len(randTimes) > 0 && randTimes[0] > 0 {
         rt = randTimes[0]

@@ -3,9 +3,10 @@ package grand_test
 import (
     "testing"
 
-    "github.com/camry/g/gutil"
-    "github.com/camry/g/gutil/grand"
+    "github.com/samber/lo"
     "github.com/stretchr/testify/assert"
+
+    "github.com/camry/g/gutil/grand"
 )
 
 func TestGRand_RangeInt(t *testing.T) {
@@ -29,7 +30,7 @@ func TestGRand_Hit(t *testing.T) {
         assert.False(t, r.Hit(0, 100))
     }
     for i := 0; i < 10; i++ {
-        assert.True(t, gutil.InArray(r.Hit(50, 100), []bool{true, false}))
+        assert.True(t, lo.Contains([]bool{true, false}, r.Hit(50, 100)))
     }
     for i := 0; i < 1000; i++ {
         assert.True(t, r.Hit(100, 100, 3))
@@ -38,7 +39,7 @@ func TestGRand_Hit(t *testing.T) {
         assert.False(t, r.Hit(0, 100, 3))
     }
     for i := 0; i < 100; i++ {
-        assert.True(t, gutil.InArray(r.Hit(50, 100, 3), []bool{true, false}))
+        assert.True(t, lo.Contains([]bool{true, false}, r.Hit(50, 100, 3)))
     }
 }
 
@@ -51,7 +52,7 @@ func TestGRand_HitProb(t *testing.T) {
         assert.False(t, r.HitProb(0))
     }
     for i := 0; i < 100; i++ {
-        assert.True(t, gutil.InArray(r.HitProb(0.5), []bool{true, false}))
+        assert.True(t, lo.Contains([]bool{true, false}, r.HitProb(0.5)))
     }
     for i := 0; i < 100; i++ {
         assert.True(t, r.HitProb(1, 3))
@@ -60,6 +61,6 @@ func TestGRand_HitProb(t *testing.T) {
         assert.False(t, r.HitProb(0, 3))
     }
     for i := 0; i < 100; i++ {
-        assert.True(t, gutil.InArray(r.HitProb(0.5, 3), []bool{true, false}))
+        assert.True(t, lo.Contains([]bool{true, false}, r.HitProb(0.5, 3)))
     }
 }
