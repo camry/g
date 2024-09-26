@@ -40,9 +40,6 @@ func (r *GRand) RangeInt(min, max int) int {
 func (r *GRand) Hit(num, total int, randTimes ...int) bool {
     r.mu.Lock()
     defer r.mu.Unlock()
-    if num <= 0 || num > total {
-        return false
-    }
     rt := 1
     if len(randTimes) > 0 && randTimes[0] > 0 {
         rt = randTimes[0]
@@ -64,9 +61,6 @@ func (r *GRand) Hit(num, total int, randTimes ...int) bool {
 func (r *GRand) HitProb(prob float32, randTimes ...int) bool {
     r.mu.Lock()
     defer r.mu.Unlock()
-    if prob <= 0 || prob > 1 {
-        return false
-    }
     rt := 1
     if len(randTimes) > 0 && randTimes[0] > 0 {
         rt = randTimes[0]
