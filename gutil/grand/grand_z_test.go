@@ -1,6 +1,7 @@
 package grand_test
 
 import (
+    "fmt"
     "testing"
 
     "github.com/samber/lo"
@@ -62,5 +63,19 @@ func TestGRand_HitProb(t *testing.T) {
     }
     for i := 0; i < 100; i++ {
         assert.True(t, lo.Contains([]bool{true, false}, r.HitProb(0.5, 3)))
+    }
+}
+
+func TestGRand_Read(t *testing.T) {
+    r := grand.NewRand(35584384341905408, true)
+
+    ch := make(chan bool, 1000000)
+
+    for i := 0; i < 100000000; i++ {
+        ch <- true
+        go func() {
+            fmt.Println(r.RangeInt(1, 100000000))
+            <-ch
+        }()
     }
 }

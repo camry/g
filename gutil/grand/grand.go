@@ -13,17 +13,19 @@ type GRand struct {
 
 // NewRand 新建种子随机数 GRand。
 // `seed` 随机种子值。
-func NewRand(seed int64) *GRand {
+func NewRand(seed int64, safe ...bool) *GRand {
     return &GRand{
         Rand: rand.New(rand.NewSource(seed)),
-        mu:   mutex.New(true),
+        mu:   mutex.New(safe...),
     }
 }
 
 // RangeInt 随机整数方法返回 `min` 到 `max` 之间的随机整数，支持负数，包含边界，即：[min, max]。
 func (r *GRand) RangeInt(min, max int) int {
-    r.mu.Lock()
-    defer r.mu.Unlock()
+    if r.mu.IsSafe() {
+        r.mu.Lock()
+        defer r.mu.Unlock()
+    }
     if min >= max {
         return min
     }
@@ -38,8 +40,10 @@ func (r *GRand) RangeInt(min, max int) int {
 // `randTimes` 取多少次随机值？(一般取3~5次)
 // 例如，Hit(1, 100)将会随机计算是否满足百分之一的概率。
 func (r *GRand) Hit(num, total int, randTimes ...int) bool {
-    r.mu.Lock()
-    defer r.mu.Unlock()
+    if r.mu.IsSafe() {
+        r.mu.Lock()
+        defer r.mu.Unlock()
+    }
     rt := 1
     if len(randTimes) > 0 && randTimes[0] > 0 {
         rt = randTimes[0]
@@ -59,8 +63,10 @@ func (r *GRand) Hit(num, total int, randTimes ...int) bool {
 // `randTimes` 取多少次随机值？(一般取3~5次)
 // 例如，HitProb(0.005)将会随机计算是否满足千分之五的概率。
 func (r *GRand) HitProb(prob float32, randTimes ...int) bool {
-    r.mu.Lock()
-    defer r.mu.Unlock()
+    if r.mu.IsSafe() {
+        r.mu.Lock()
+        defer r.mu.Unlock()
+    }
     rt := 1
     if len(randTimes) > 0 && randTimes[0] > 0 {
         rt = randTimes[0]
@@ -75,4 +81,12 @@ func (r *GRand) HitProb(prob float32, randTimes ...int) bool {
         return rv < num
     }
     return r.Intn(1e7) < num
+}
+
+func (r *GRand) Shuffle(n int, swap func(i, j int)) {
+    if r.mu.IsSafe() {
+        r.mu.Lock()
+        defer r.mu.Unlock()
+    }
+    r.Rand.Shuffle(n, swap)
 }
