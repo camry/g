@@ -3,8 +3,9 @@ package gcode_test
 import (
     "testing"
 
-    "github.com/camry/g/gerrors/gcode"
     "github.com/stretchr/testify/assert"
+
+    "github.com/camry/g/gerrors/gcode"
 )
 
 func TestNew(t *testing.T) {

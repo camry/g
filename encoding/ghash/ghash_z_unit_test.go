@@ -1,8 +1,9 @@
 package ghash_test
 
 import (
-    "github.com/stretchr/testify/assert"
     "testing"
+
+    "github.com/stretchr/testify/assert"
 
     "github.com/camry/g/encoding/ghash"
 )

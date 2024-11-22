@@ -3,13 +3,14 @@ package gudp_test
 import (
     "context"
     "fmt"
-    "github.com/camry/g/gerrors/gerror"
     "strconv"
     "testing"
     "time"
 
-    "github.com/camry/g/gnet/gudp"
     "github.com/stretchr/testify/assert"
+
+    "github.com/camry/g/gerrors/gerror"
+    "github.com/camry/g/gnet/gudp"
 )
 
 var (

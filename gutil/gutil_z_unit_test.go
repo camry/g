@@ -3,8 +3,9 @@ package gutil_test
 import (
     "testing"
 
-    "github.com/camry/g/gutil"
     "github.com/stretchr/testify/assert"
+
+    "github.com/camry/g/gutil"
 )
 
 func TestInArray(t *testing.T) {

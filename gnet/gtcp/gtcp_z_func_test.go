@@ -3,8 +3,9 @@ package gtcp_test
 import (
     "testing"
 
-    "github.com/camry/g/gnet/gtcp"
     "github.com/stretchr/testify/assert"
+
+    "github.com/camry/g/gnet/gtcp"
 )
 
 func TestGetFreePort(t *testing.T) {

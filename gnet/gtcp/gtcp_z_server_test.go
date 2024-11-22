@@ -7,8 +7,9 @@ import (
     "testing"
     "time"
 
-    "github.com/camry/g/gnet/gtcp"
     "github.com/stretchr/testify/assert"
+
+    "github.com/camry/g/gnet/gtcp"
 )
 
 var (

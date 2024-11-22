@@ -4,11 +4,12 @@ import (
     "encoding/json"
     "errors"
     "fmt"
-    "github.com/camry/g/gerrors/gcode"
     "testing"
 
-    "github.com/camry/g/gerrors/gerror"
     "github.com/stretchr/testify/assert"
+
+    "github.com/camry/g/gerrors/gcode"
+    "github.com/camry/g/gerrors/gerror"
 )
 
 func nilError() error {

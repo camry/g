@@ -3,8 +3,9 @@ package gudp_test
 import (
     "testing"
 
-    "github.com/camry/g/gnet/gudp"
     "github.com/stretchr/testify/assert"
+
+    "github.com/camry/g/gnet/gudp"
 )
 
 func TestGetFreePort(t *testing.T) {
