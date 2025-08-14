@@ -8,7 +8,7 @@ import (
 
     "github.com/stretchr/testify/assert"
 
-    "github.com/camry/g/gutil/gregex"
+    "github.com/camry/g/gtext/gregex"
 )
 
 var (

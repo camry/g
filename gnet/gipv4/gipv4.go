@@ -6,7 +6,7 @@ import (
     "net"
     "strconv"
 
-    "github.com/camry/g/gutil/gregex"
+    "github.com/camry/g/gtext/gregex"
 )
 
 // Ip2long converts ip address to an uint32 integer.

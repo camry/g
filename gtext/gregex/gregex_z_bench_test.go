@@ -4,7 +4,7 @@ import (
     "regexp"
     "testing"
 
-    "github.com/camry/g/gutil/gregex"
+    "github.com/camry/g/gtext/gregex"
 )
 
 var pattern = `(\w+).+\-\-\s*(.+)`

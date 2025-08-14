@@ -1,6 +1,8 @@
 package gipv6
 
-import "github.com/camry/g/gutil/gregex"
+import (
+    "github.com/camry/g/gtext/gregex"
+)
 
 // Validate checks whether given `ip` a valid IPv6 address.
 func Validate(ip string) bool {
