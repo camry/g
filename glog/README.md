@@ -40,6 +40,7 @@ log.Error("warn log")
 ```shell
 go get -u github.com/go-kratos/kratos/contrib/log/zap/v2
 ```
+
 ### logrus
 
 ```shell

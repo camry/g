@@ -1,10 +1,10 @@
 package glog
 
 import (
-	"bytes"
-	"testing"
+    "bytes"
+    "testing"
 
-	"golang.org/x/sync/errgroup"
+    "golang.org/x/sync/errgroup"
 )
 
 func TestStdLogger(_ *testing.T) {
@@ -22,19 +22,19 @@ func TestStdLogger(_ *testing.T) {
 }
 
 func TestStdLogger_Log(t *testing.T) {
-	var b bytes.Buffer
-	logger := NewStdLogger(&b)
+    var b bytes.Buffer
+    logger := NewStdLogger(&b)
 
-	var eg errgroup.Group
-	eg.Go(func() error { return logger.Log(LevelInfo, "msg", "a", "k", "v") })
-	eg.Go(func() error { return logger.Log(LevelInfo, "msg", "a", "k", "v") })
+    var eg errgroup.Group
+    eg.Go(func() error { return logger.Log(LevelInfo, "msg", "a", "k", "v") })
+    eg.Go(func() error { return logger.Log(LevelInfo, "msg", "a", "k", "v") })
 
-	err := eg.Wait()
-	if err != nil {
-		t.Fatalf("log error: %v", err)
-	}
+    err := eg.Wait()
+    if err != nil {
+        t.Fatalf("log error: %v", err)
+    }
 
-	if s := b.String(); s != "INFO msg=a k=v\nINFO msg=a k=v\n" {
-		t.Fatalf("log not match: %q", s)
-	}
+    if s := b.String(); s != "INFO msg=a k=v\nINFO msg=a k=v\n" {
+        t.Fatalf("log not match: %q", s)
+    }
 }

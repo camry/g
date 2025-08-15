@@ -25,9 +25,12 @@ func NewChain(c ...JobWrapper) Chain {
 // Then 用链中的所有 JobWrapper 装饰指定的任务。
 //
 // 这个:
-//     NewChain(m1, m2, m3).Then(job)
+//
+//	NewChain(m1, m2, m3).Then(job)
+//
 // 相当于:
-//     m1(m2(m3(job)))
+//
+//	m1(m2(m3(job)))
 func (c Chain) Then(j Job) Job {
     for i := range c.wrappers {
         j = c.wrappers[len(c.wrappers)-i-1](j)

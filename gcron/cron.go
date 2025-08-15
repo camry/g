@@ -93,17 +93,17 @@ func (s byTime) Less(i, j int) bool {
 //
 // 可用设置
 //
-//   TimeZone
-//     描述: 解释时间表的时区
-//     默认: time.Local
+//	TimeZone
+//	  描述: 解释时间表的时区
+//	  默认: time.Local
 //
-//   Parser
-//     描述: Parser 将 cron 规范字符串转换为 cron.Schedules。
-//     默认: 接受此规范：https://en.wikipedia.org/wiki/Cron
+//	Parser
+//	  描述: Parser 将 cron 规范字符串转换为 cron.Schedules。
+//	  默认: 接受此规范：https://en.wikipedia.org/wiki/Cron
 //
-//   Chain
-//     描述: 以自定义行为包装提交任务。
-//     默认: 恢复 panic 并将其记录到标准错误 stderr。
+//	Chain
+//	  描述: 以自定义行为包装提交任务。
+//	  默认: 恢复 panic 并将其记录到标准错误 stderr。
 //
 // 请参阅“cron.With*”以修改默认行为。
 func New(opts ...Option) *Cron {

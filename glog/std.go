@@ -10,23 +10,23 @@ import (
 var _ Logger = (*stdLogger)(nil)
 
 type stdLogger struct {
-	w         io.Writer
-	isDiscard bool
-	mu        sync.Mutex
-	pool      *sync.Pool
+    w         io.Writer
+    isDiscard bool
+    mu        sync.Mutex
+    pool      *sync.Pool
 }
 
 // NewStdLogger 新建一个日志记录器。
 func NewStdLogger(w io.Writer) Logger {
-	return &stdLogger{
-		w:         w,
-		isDiscard: w == io.Discard,
-		pool: &sync.Pool{
-			New: func() interface{} {
-				return new(bytes.Buffer)
-			},
-		},
-	}
+    return &stdLogger{
+        w:         w,
+        isDiscard: w == io.Discard,
+        pool: &sync.Pool{
+            New: func() interface{} {
+                return new(bytes.Buffer)
+            },
+        },
+    }
 }
 
 // Log 打印键值对日志。
