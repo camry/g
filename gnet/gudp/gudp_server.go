@@ -1,7 +1,6 @@
 package gudp
 
 import (
-    "context"
     "fmt"
     "net"
     "strings"
@@ -12,55 +11,54 @@ import (
 )
 
 const (
-    // FreePortAddress 使用随机端口标记服务器监听。
+    // FreePortAddress 标记服务器使用随机空闲端口侦听。
     FreePortAddress = ":0"
 )
 
-// Server 定义 UDP 服务器。
+const (
+    defaultServer = "default"
+)
+
+// Server is the UDP server.
 type Server struct {
-    err     error
-    mu      sync.Mutex  // 用于 Server.Conn 并发安全。
-    conn    *Conn       // UDP 服务器连接对象。
-    network string      // UDP 服务器网络协议。
-    address string      // UDP 服务器监听地址。
-    handler func(*Conn) // UDP 连接的处理程序。
+    // 用于服务器端。监听并发安全性。
+    mu sync.Mutex
+
+    // UDP 服务器连接对象。
+    conn *ServerConn
+
+    // UDP 服务器监听地址。
+    address string
+
+    // UDP 连接的处理程序。
+    handler ServerHandler
 }
 
-// NewServer 新建 UDP 服务器。
-func NewServer(address string, handler func(*Conn)) *Server {
-    srv := &Server{
-        network: "udp",
+// ServerHandler 处理所有服务器连接。
+type ServerHandler func(conn *ServerConn)
+
+// NewServer 创建并返回UDP服务器。
+func NewServer(address string, handler ServerHandler) *Server {
+    s := &Server{
         address: address,
         handler: handler,
     }
-    srv.err = srv.listener()
-    return srv
+    return s
 }
 
-// listener 网络监听器。
-func (s *Server) listener() (err error) {
-    if s.handler == nil {
-        err := gerror.NewCode(gcode.CodeMissingConfiguration, "start running failed: socket handler not defined")
-        return err
-    }
-    addr, err := net.ResolveUDPAddr(s.network, s.address)
-    if err != nil {
-        err = gerror.Wrapf(err, `net.ResolveUDPAddr failed for address "%s"`, s.address)
-        return err
-    }
-    conn, err := net.ListenUDP(s.network, addr)
-    if err != nil {
-        err = gerror.Wrapf(err, `net.ListenUDP failed for address "%s"`, s.address)
-        return err
-    }
-    s.mu.Lock()
-    s.conn = NewConnByNetConn(conn)
-    s.mu.Unlock()
-    return nil
+// SetAddress 设置UDP服务器地址。
+func (s *Server) SetAddress(address string) {
+    s.address = address
 }
 
-// Close 关闭 UDP 服务器。
-func (s *Server) Close(ctx context.Context) (err error) {
+// SetHandler 设置UDP服务器的连接处理程序。
+func (s *Server) SetHandler(handler ServerHandler) {
+    s.handler = handler
+}
+
+// Close 关闭连接。
+// 它将使服务器立即关闭。
+func (s *Server) Close() (err error) {
     s.mu.Lock()
     defer s.mu.Unlock()
     err = s.conn.Close()
@@ -70,11 +68,27 @@ func (s *Server) Close(ctx context.Context) (err error) {
     return
 }
 
-// Run 启动 UDP 服务器。
-func (s *Server) Run(ctx context.Context) (err error) {
-    if s.err != nil {
-        return s.err
+// Run 开始监听UDP连接。
+func (s *Server) Run() error {
+    if s.handler == nil {
+        return gerror.NewCode(
+            gcode.CodeMissingConfiguration,
+            "start running failed: socket handler not defined",
+        )
     }
+    addr, err := net.ResolveUDPAddr("udp", s.address)
+    if err != nil {
+        err = gerror.Wrapf(err, `net.ResolveUDPAddr failed for address "%s"`, s.address)
+        return err
+    }
+    listenedConn, err := net.ListenUDP("udp", addr)
+    if err != nil {
+        err = gerror.Wrapf(err, `net.ListenUDP failed for address "%s"`, s.address)
+        return err
+    }
+    s.mu.Lock()
+    s.conn = NewServerConn(listenedConn)
+    s.mu.Unlock()
     s.handler(s.conn)
     return nil
 }

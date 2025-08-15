@@ -9,8 +9,9 @@ import (
 )
 
 const (
-    pkgHeaderSizeDefault = 2 // 包协议的标头大小。
-    pkgHeaderSizeMax     = 4 // 包协议的最大标头大小。
+    _                    = iota << 1
+    pkgHeaderSizeDefault // 包协议的标头大小。
+    pkgHeaderSizeMax     // 包协议的最大标头大小。
 )
 
 // PkgOption 是协议的封装选项。
@@ -59,34 +60,36 @@ func (c *Conn) SendPkg(data []byte, option ...PkgOption) error {
 
 // SendPkgWithTimeout 使用包协议将数据写入超时连接。
 func (c *Conn) SendPkgWithTimeout(data []byte, timeout time.Duration, option ...PkgOption) (err error) {
-    if err := c.SetSendDeadline(time.Now().Add(timeout)); err != nil {
+    if err := c.SetDeadlineSend(time.Now().Add(timeout)); err != nil {
         return err
     }
-    defer c.SetSendDeadline(time.Time{})
+    defer func() {
+        _ = c.SetDeadlineSend(time.Time{})
+    }()
     err = c.SendPkg(data, option...)
     return
 }
 
-// SendReceivePkg 使用包协议将数据写入连接并阻止读取响应。
-func (c *Conn) SendReceivePkg(data []byte, option ...PkgOption) ([]byte, error) {
+// SendRecvPkg 使用包协议将数据写入连接并阻止读取响应。
+func (c *Conn) SendRecvPkg(data []byte, option ...PkgOption) ([]byte, error) {
     if err := c.SendPkg(data, option...); err == nil {
-        return c.ReceivePkg(option...)
+        return c.RecvPkg(option...)
     } else {
         return nil, err
     }
 }
 
-// SendReceivePkgWithTimeout 使用包协议将数据写入连接并读取超时响应。
-func (c *Conn) SendReceivePkgWithTimeout(data []byte, timeout time.Duration, option ...PkgOption) ([]byte, error) {
+// SendRecvPkgWithTimeout 使用包协议将数据写入连接并读取超时响应。
+func (c *Conn) SendRecvPkgWithTimeout(data []byte, timeout time.Duration, option ...PkgOption) ([]byte, error) {
     if err := c.SendPkg(data, option...); err == nil {
-        return c.ReceivePkgWithTimeout(timeout, option...)
+        return c.RecvPkgWithTimeout(timeout, option...)
     } else {
         return nil, err
     }
 }
 
-// ReceivePkg 使用包协议从连接接收数据。
-func (c *Conn) ReceivePkg(option ...PkgOption) (result []byte, err error) {
+// RecvPkg 使用包协议从连接接收数据。
+func (c *Conn) RecvPkg(option ...PkgOption) (result []byte, err error) {
     var (
         buffer []byte
         length int
@@ -96,7 +99,7 @@ func (c *Conn) ReceivePkg(option ...PkgOption) (result []byte, err error) {
         return nil, err
     }
     // 头字段。
-    buffer, err = c.Receive(pkgOption.HeaderSize, pkgOption.Retry)
+    buffer, err = c.Recv(pkgOption.HeaderSize, pkgOption.Retry)
     if err != nil {
         return nil, err
     }
@@ -121,16 +124,18 @@ func (c *Conn) ReceivePkg(option ...PkgOption) (result []byte, err error) {
         return nil, nil
     }
     // 数据字段。
-    return c.Receive(length, pkgOption.Retry)
+    return c.Recv(length, pkgOption.Retry)
 }
 
-// ReceivePkgWithTimeout 使用包协议从超时连接中读取数据。
-func (c *Conn) ReceivePkgWithTimeout(timeout time.Duration, option ...PkgOption) (data []byte, err error) {
-    if err := c.SetReceiveDeadline(time.Now().Add(timeout)); err != nil {
+// RecvPkgWithTimeout 使用包协议从超时连接中读取数据。
+func (c *Conn) RecvPkgWithTimeout(timeout time.Duration, option ...PkgOption) (data []byte, err error) {
+    if err = c.SetDeadlineRecv(time.Now().Add(timeout)); err != nil {
         return nil, err
     }
-    defer c.SetReceiveDeadline(time.Time{})
-    data, err = c.ReceivePkg(option...)
+    defer func() {
+        _ = c.SetDeadlineRecv(time.Time{})
+    }()
+    data, err = c.RecvPkg(option...)
     return
 }
 

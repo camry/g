@@ -3,7 +3,6 @@ package gtcp
 import (
     "context"
     "crypto/tls"
-    "errors"
     "fmt"
     "net"
     "strings"
@@ -20,10 +19,8 @@ const (
 
 // Server 定义 TCP 服务包装器。
 type Server struct {
-    err       error
     mu        sync.Mutex   // 用于 Server.listen 并发安全。
     listen    net.Listener // 网络监听器。
-    network   string       // 服务器网络协议。
     address   string       // 服务器监听地址。
     handler   func(*Conn)  // 连接处理器。
     tlsConfig *tls.Config  // TLS 配置。
@@ -31,58 +28,38 @@ type Server struct {
 
 // NewServer 新建 TCP 服务器。
 func NewServer(address string, handler func(*Conn)) *Server {
-    srv := &Server{
-        network: "tcp",
+    s := &Server{
         address: address,
         handler: handler,
     }
-    srv.err = srv.listener()
-    return srv
+    return s
 }
 
 // NewServerTLS 新建 TCP TLS 服务器。
 func NewServerTLS(address string, tlsConfig *tls.Config, handler func(*Conn)) *Server {
-    srv := &Server{
-        network:   "tcp",
-        address:   address,
-        handler:   handler,
-        tlsConfig: tlsConfig,
-    }
-    srv.err = srv.listener()
-    return srv
+    s := NewServer(address, handler)
+    s.SetTLSConfig(tlsConfig)
+    return s
 }
 
-// listener 网络监听器。
-func (s *Server) listener() (err error) {
-    if s.handler == nil {
-        err = gerror.NewCode(gcode.CodeMissingConfiguration, "start running failed: socket handler not defined")
-        return
-    }
-    if s.tlsConfig != nil {
-        // TLS Server
-        s.mu.Lock()
-        s.listen, err = tls.Listen(s.network, s.address, s.tlsConfig)
-        s.mu.Unlock()
-        if err != nil {
-            err = gerror.Wrapf(err, `tls.Listen failed for address "%s"`, s.address)
-            return
-        }
-    } else {
-        // Normal Server
-        var tcpAddr *net.TCPAddr
-        if tcpAddr, err = net.ResolveTCPAddr(s.network, s.address); err != nil {
-            err = gerror.Wrapf(err, `net.ResolveTCPAddr failed for address "%s"`, s.address)
-            return err
-        }
-        s.mu.Lock()
-        s.listen, err = net.ListenTCP(s.network, tcpAddr)
-        s.mu.Unlock()
-        if err != nil {
-            err = gerror.Wrapf(err, `net.ListenTCP failed for address "%s"`, s.address)
-            return err
-        }
-    }
-    return nil
+// SetAddress 设置监听地址。
+func (s *Server) SetAddress(address string) {
+    s.address = address
+}
+
+// GetAddress 获取监听地址。
+func (s *Server) GetAddress() string {
+    return s.address
+}
+
+// SetHandler 设置连接处理器。
+func (s *Server) SetHandler(handler func(*Conn)) {
+    s.handler = handler
+}
+
+// SetTLSConfig 设置 TLS 配置。
+func (s *Server) SetTLSConfig(tlsConfig *tls.Config) {
+    s.tlsConfig = tlsConfig
 }
 
 // Close 关闭 TCP 服务器。
@@ -97,16 +74,33 @@ func (s *Server) Close(ctx context.Context) error {
 
 // Run 启动 TCP 服务器。
 func (s *Server) Run(ctx context.Context) (err error) {
-    if s.err != nil {
-        return s.err
-    }
-    if s.listen == nil {
-        err = errors.New("gtcp start running failed: socket Listener not defined")
-        return
-    }
     if s.handler == nil {
-        err = errors.New("gtcp start running failed: socket handler not defined")
+        err = gerror.NewCode(gcode.CodeMissingConfiguration, "start running failed: socket handler not defined")
         return
+    }
+    if s.tlsConfig != nil {
+        // TLS Server
+        s.mu.Lock()
+        s.listen, err = tls.Listen("tcp", s.address, s.tlsConfig)
+        s.mu.Unlock()
+        if err != nil {
+            err = gerror.Wrapf(err, `tls.Listen failed for address "%s"`, s.address)
+            return
+        }
+    } else {
+        // Normal Server
+        var tcpAddr *net.TCPAddr
+        if tcpAddr, err = net.ResolveTCPAddr("tcp", s.address); err != nil {
+            err = gerror.Wrapf(err, `net.ResolveTCPAddr failed for address "%s"`, s.address)
+            return err
+        }
+        s.mu.Lock()
+        s.listen, err = net.ListenTCP("tcp", tcpAddr)
+        s.mu.Unlock()
+        if err != nil {
+            err = gerror.Wrapf(err, `net.ListenTCP failed for address "%s"`, s.address)
+            return err
+        }
     }
     // Listening loop.
     for {

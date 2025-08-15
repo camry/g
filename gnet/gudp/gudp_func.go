@@ -6,7 +6,7 @@ import (
     "github.com/camry/g/gerrors/gerror"
 )
 
-// NewNetConn 创建并返回具有指定地址的 *net.UDPConn。
+// NewNetConn 创建并返回指定地址的 *net.UDPConn。
 func NewNetConn(remoteAddress string, localAddress ...string) (*net.UDPConn, error) {
     var (
         err        error
@@ -43,10 +43,10 @@ func NewNetConn(remoteAddress string, localAddress ...string) (*net.UDPConn, err
     return conn, nil
 }
 
-// Send 使用 UDP 连接将数据写入“地址”，然后关闭连接。
+// Send 使用UDP连接将数据写入`address`，然后关闭连接。
 // 请注意，它用于短连接使用。
 func Send(address string, data []byte, retry ...Retry) error {
-    conn, err := NewConn(address)
+    conn, err := NewClientConn(address)
     if err != nil {
         return err
     }
@@ -54,18 +54,19 @@ func Send(address string, data []byte, retry ...Retry) error {
     return conn.Send(data, retry...)
 }
 
-// SendReceive 使用 UDP 连接将数据写入“地址”，读取响应，然后关闭连接。
+// SendRecv 使用UDP连接将数据写入`address`，读取响应，然后关闭连接。
 // 请注意，它用于短连接使用。
-func SendReceive(address string, data []byte, receive int, retry ...Retry) ([]byte, error) {
-    conn, err := NewConn(address)
+func SendRecv(address string, data []byte, receive int, retry ...Retry) ([]byte, error) {
+    conn, err := NewClientConn(address)
     if err != nil {
         return nil, err
     }
     defer conn.Close()
-    return conn.SendReceive(data, receive, retry...)
+    return conn.SendRecv(data, receive, retry...)
 }
 
 // MustGetFreePort 执行 GetFreePort，但发生任何错误都会 panic。
+// Deprecated: 端口可能在返回后不久就会被使用，请使用 `:0` 作为监听地址，它会要求系统分配一个空闲端口。
 func MustGetFreePort() (port int) {
     port, err := GetFreePort()
     if err != nil {
@@ -75,6 +76,7 @@ func MustGetFreePort() (port int) {
 }
 
 // GetFreePort 检索并返回一个空闲的端口。
+// Deprecated: 端口可能在返回后不久就会被使用，请使用 `:0` 作为监听地址，它会要求系统分配一个空闲端口。
 func GetFreePort() (port int, err error) {
     var (
         network = `udp`
@@ -102,6 +104,7 @@ func GetFreePort() (port int, err error) {
 }
 
 // GetFreePorts 检索并返回指定数量的空闲端口。
+// Deprecated: 端口可能在返回后不久就会被使用，请使用 `:0` 作为监听地址，它会要求系统分配一个空闲端口。
 func GetFreePorts(count int) (ports []int, err error) {
     var (
         network = `udp`

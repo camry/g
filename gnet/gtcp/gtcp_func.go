@@ -4,7 +4,7 @@ import (
     "crypto/tls"
     "net"
     "time"
-    
+
     "github.com/camry/g/gerrors/gerror"
 )
 
@@ -74,17 +74,17 @@ func Send(address string, data []byte, retry ...Retry) error {
     return conn.Send(data, retry...)
 }
 
-// SendReceive 创建到 `address` 的连接，将 `data` 写入连接，接收响应，然后关闭连接。
+// SendRecv 创建到 `address` 的连接，将 `data` 写入连接，接收响应，然后关闭连接。
 //
 // 参数 `length` 指定等待接收的字节数。 它接收所有缓冲区内容并在 `length` 为 -1 时返回。
 // 可选参数 `retry` 指定写入数据失败时的重试策略。
-func SendReceive(address string, data []byte, length int, retry ...Retry) ([]byte, error) {
+func SendRecv(address string, data []byte, length int, retry ...Retry) ([]byte, error) {
     conn, err := NewConn(address)
     if err != nil {
         return nil, err
     }
     defer conn.Close()
-    return conn.SendReceive(data, length, retry...)
+    return conn.SendRecv(data, length, retry...)
 }
 
 // SendWithTimeout 发送具有写入超时限制的逻辑。
@@ -97,14 +97,14 @@ func SendWithTimeout(address string, data []byte, timeout time.Duration, retry .
     return conn.SendWithTimeout(data, timeout, retry...)
 }
 
-// SendReceiveWithTimeout 执行具有读取超时限制的 SendReceive 逻辑。
-func SendReceiveWithTimeout(address string, data []byte, receive int, timeout time.Duration, retry ...Retry) ([]byte, error) {
+// SendRecvWithTimeout 执行具有读取超时限制的 SendRecv 逻辑。
+func SendRecvWithTimeout(address string, data []byte, receive int, timeout time.Duration, retry ...Retry) ([]byte, error) {
     conn, err := NewConn(address)
     if err != nil {
         return nil, err
     }
     defer conn.Close()
-    return conn.SendReceiveWithTimeout(data, receive, timeout, retry...)
+    return conn.SendRecvWithTimeout(data, receive, timeout, retry...)
 }
 
 // isTimeout 检查给定的 `err` 是否是超时错误。

@@ -23,7 +23,7 @@ func startTCPServer(addr string) *gtcp.Server {
     s := gtcp.NewServer(addr, func(conn *gtcp.Conn) {
         defer conn.Close()
         for {
-            data, err := conn.Receive(-1)
+            data, err := conn.Recv(-1)
             if err != nil {
                 break
             }
@@ -40,7 +40,7 @@ func startTCPPkgServer(addr string) *gtcp.Server {
     s := gtcp.NewServer(addr, func(conn *gtcp.Conn) {
         defer conn.Close()
         for {
-            data, err := conn.ReceivePkg()
+            data, err := conn.RecvPkg()
             if err != nil {
                 break
             }
@@ -62,7 +62,7 @@ func TestConnGetFreePorts(t *testing.T) {
     conn, err := gtcp.NewConn(fmt.Sprintf("127.0.0.1:%d", ports[0]))
     assert.Nil(t, err)
     defer conn.Close()
-    result, err := conn.SendReceive(sendData, -1)
+    result, err := conn.SendRecv(sendData, -1)
     assert.Nil(t, err)
     assert.Equal(t, result, sendData)
 
@@ -76,7 +76,7 @@ func TestConnMustGetFreePort(t *testing.T) {
     addr := fmt.Sprintf("%s:%d", "127.0.0.1", port)
     startTCPServer(addr)
 
-    result, err := gtcp.SendReceive(addr, sendData, -1)
+    result, err := gtcp.SendRecv(addr, sendData, -1)
     assert.Nil(t, err)
     assert.Equal(t, sendData, result)
 }
@@ -94,7 +94,7 @@ func TestNewConn(t *testing.T) {
     assert.Nil(t, err1)
     assert.NotEqual(t, conn1, nil)
     defer conn1.Close()
-    result1, err1 := conn1.SendReceive(sendData, -1)
+    result1, err1 := conn1.SendRecv(sendData, -1)
     assert.Nil(t, err1)
     assert.Equal(t, result1, sendData)
 }
@@ -107,7 +107,7 @@ func TestConn_Send(t *testing.T) {
     assert.NotNil(t, conn)
     err = conn.Send(sendData, gtcp.Retry{Count: 1})
     assert.Nil(t, err)
-    result, err := conn.Receive(-1)
+    result, err := conn.Recv(-1)
     assert.Nil(t, err)
     assert.Equal(t, result, sendData)
 }
@@ -120,46 +120,46 @@ func TestConn_SendWithTimeout(t *testing.T) {
     assert.NotNil(t, conn)
     err = conn.SendWithTimeout(sendData, time.Second, gtcp.Retry{Count: 1})
     assert.Nil(t, err)
-    result, err := conn.Receive(-1)
+    result, err := conn.Recv(-1)
     assert.Nil(t, err)
     assert.Equal(t, result, sendData)
 }
 
-func TestConn_SendReceive(t *testing.T) {
+func TestConn_SendRecv(t *testing.T) {
     s := startTCPServer(gtcp.FreePortAddress)
 
     conn, err := gtcp.NewConn(s.GetListenedAddress())
     assert.Nil(t, err)
     assert.NotNil(t, conn)
-    result, err := conn.SendReceive(sendData, -1, gtcp.Retry{Count: 1})
+    result, err := conn.SendRecv(sendData, -1, gtcp.Retry{Count: 1})
     assert.Nil(t, err)
     assert.Equal(t, result, sendData)
 }
 
-func TestConn_SendReceiveWithTimeout(t *testing.T) {
+func TestConn_SendRecvWithTimeout(t *testing.T) {
     s := startTCPServer(gtcp.FreePortAddress)
 
     conn, err := gtcp.NewConn(s.GetListenedAddress())
     assert.Nil(t, err)
     assert.NotNil(t, conn)
-    result, err := conn.SendReceiveWithTimeout(sendData, -1, time.Second, gtcp.Retry{Count: 1})
+    result, err := conn.SendRecvWithTimeout(sendData, -1, time.Second, gtcp.Retry{Count: 1})
     assert.Nil(t, err)
     assert.Equal(t, result, sendData)
 }
 
-func TestConn_ReceiveWithTimeout(t *testing.T) {
+func TestConn_RecvWithTimeout(t *testing.T) {
     s := startTCPServer(gtcp.FreePortAddress)
 
     conn, err := gtcp.NewConn(s.GetListenedAddress())
     assert.Nil(t, err)
     assert.NotNil(t, conn)
     conn.Send(sendData)
-    result, err := conn.ReceiveWithTimeout(-1, time.Second, gtcp.Retry{Count: 1})
+    result, err := conn.RecvWithTimeout(-1, time.Second, gtcp.Retry{Count: 1})
     assert.Nil(t, err)
     assert.Equal(t, result, sendData)
 }
 
-func TestConn_ReceiveLine(t *testing.T) {
+func TestConn_RecvLine(t *testing.T) {
     s := startTCPServer(gtcp.FreePortAddress)
 
     conn, err := gtcp.NewConn(s.GetListenedAddress())
@@ -167,20 +167,20 @@ func TestConn_ReceiveLine(t *testing.T) {
     assert.NotNil(t, conn)
     data := []byte("hello\n")
     conn.Send(data)
-    result, err := conn.ReceiveLine(gtcp.Retry{Count: 1})
+    result, err := conn.RecvLine(gtcp.Retry{Count: 1})
     assert.Nil(t, err)
     splitData := strings.Split(string(data), "\n")
     assert.Equal(t, string(result), splitData[0])
 }
 
-func TestConn_ReceiveTill(t *testing.T) {
+func TestConn_RecvTill(t *testing.T) {
     s := startTCPServer(gtcp.FreePortAddress)
 
     conn, err := gtcp.NewConn(s.GetListenedAddress())
     assert.Nil(t, err)
     assert.NotNil(t, conn)
     conn.Send(sendData)
-    result, err := conn.ReceiveTill([]byte("hello"), gtcp.Retry{Count: 1})
+    result, err := conn.RecvTill([]byte("hello"), gtcp.Retry{Count: 1})
     assert.Nil(t, err)
     assert.Equal(t, result, sendData)
 }
@@ -194,21 +194,21 @@ func TestConn_SetDeadline(t *testing.T) {
     conn.SetDeadline(time.Time{})
     err = conn.Send(sendData, gtcp.Retry{Count: 1})
     assert.Nil(t, err)
-    result, err := conn.Receive(-1)
+    result, err := conn.Recv(-1)
     assert.Nil(t, err)
     assert.Equal(t, result, sendData)
 }
 
-func TestConn_SetReceiveBufferWait(t *testing.T) {
+func TestConn_SetRecvBufferWait(t *testing.T) {
     s := startTCPServer(gtcp.FreePortAddress)
 
     conn, err := gtcp.NewConn(s.GetListenedAddress())
     assert.Nil(t, err)
     assert.NotNil(t, conn)
-    conn.SetReceiveBufferWait(time.Millisecond * 100)
+    conn.SetBufferWaitRecv(time.Millisecond * 100)
     err = conn.Send(sendData, gtcp.Retry{Count: 1})
     assert.Nil(t, err)
-    result, err := conn.Receive(-1)
+    result, err := conn.Recv(-1)
     assert.Nil(t, err)
     assert.Equal(t, result, sendData)
 }
@@ -223,14 +223,14 @@ func TestSend(t *testing.T) {
     assert.Nil(t, err2)
 }
 
-func TestSendReceive(t *testing.T) {
+func TestSendRecv(t *testing.T) {
     s := startTCPServer(gtcp.FreePortAddress)
 
-    result1, err1 := gtcp.SendReceive(invalidAddr, sendData, -1)
+    result1, err1 := gtcp.SendRecv(invalidAddr, sendData, -1)
     assert.NotNil(t, err1)
     assert.Nil(t, result1)
 
-    result2, err2 := gtcp.SendReceive(s.GetListenedAddress(), sendData, -1)
+    result2, err2 := gtcp.SendRecv(s.GetListenedAddress(), sendData, -1)
     assert.Nil(t, err2)
     assert.Equal(t, result2, sendData)
 }
@@ -244,13 +244,13 @@ func TestSendWithTimeout(t *testing.T) {
     assert.Nil(t, err)
 }
 
-func TestSendReceiveWithTimeout(t *testing.T) {
+func TestSendRecvWithTimeout(t *testing.T) {
     s := startTCPServer(gtcp.FreePortAddress)
 
-    result, err := gtcp.SendReceiveWithTimeout(invalidAddr, sendData, -1, time.Millisecond*500)
+    result, err := gtcp.SendRecvWithTimeout(invalidAddr, sendData, -1, time.Millisecond*500)
     assert.Nil(t, result)
     assert.NotNil(t, err)
-    result, err = gtcp.SendReceiveWithTimeout(s.GetListenedAddress(), sendData, -1, time.Millisecond*500)
+    result, err = gtcp.SendRecvWithTimeout(s.GetListenedAddress(), sendData, -1, time.Millisecond*500)
     assert.Nil(t, err)
     assert.Equal(t, result, sendData)
 }
@@ -269,17 +269,17 @@ func TestSendPkg(t *testing.T) {
     assert.Nil(t, err2)
 }
 
-func TestSendReceivePkg(t *testing.T) {
+func TestSendRecvPkg(t *testing.T) {
     s := startTCPPkgServer(gtcp.FreePortAddress)
 
     err1 := gtcp.SendPkg(s.GetListenedAddress(), sendData)
     assert.Nil(t, err1)
-    _, err1 = gtcp.SendReceivePkg(invalidAddr, sendData)
+    _, err1 = gtcp.SendRecvPkg(invalidAddr, sendData)
     assert.NotNil(t, err1)
 
     err2 := gtcp.SendPkg(s.GetListenedAddress(), sendData)
     assert.Nil(t, err2)
-    result, err2 := gtcp.SendReceivePkg(s.GetListenedAddress(), sendData)
+    result, err2 := gtcp.SendRecvPkg(s.GetListenedAddress(), sendData)
     assert.Nil(t, err2)
     assert.Equal(t, result, sendData)
 }
@@ -298,17 +298,17 @@ func TestSendPkgWithTimeout(t *testing.T) {
     assert.Nil(t, err2)
 }
 
-func TestSendReceivePkgWithTimeout(t *testing.T) {
+func TestSendRecvPkgWithTimeout(t *testing.T) {
     s := startTCPPkgServer(gtcp.FreePortAddress)
 
     err1 := gtcp.SendPkg(s.GetListenedAddress(), sendData)
     assert.Nil(t, err1)
-    _, err1 = gtcp.SendReceivePkgWithTimeout(invalidAddr, sendData, time.Second)
+    _, err1 = gtcp.SendRecvPkgWithTimeout(invalidAddr, sendData, time.Second)
     assert.NotNil(t, err1)
 
     err2 := gtcp.SendPkg(s.GetListenedAddress(), sendData)
     assert.Nil(t, err2)
-    result, err2 := gtcp.SendReceivePkgWithTimeout(s.GetListenedAddress(), sendData, time.Second)
+    result, err2 := gtcp.SendRecvPkgWithTimeout(s.GetListenedAddress(), sendData, time.Second)
     assert.Nil(t, err2)
     assert.Equal(t, result, sendData)
 }
@@ -318,7 +318,7 @@ func TestNewServer(t *testing.T) {
     s := gtcp.NewServer(gtcp.FreePortAddress, func(conn *gtcp.Conn) {
         defer conn.Close()
         for {
-            data, err := conn.Receive(-1)
+            data, err := conn.Recv(-1)
             if err != nil {
                 break
             }
@@ -330,7 +330,7 @@ func TestNewServer(t *testing.T) {
 
     time.Sleep(simpleTimeout)
 
-    result, err := gtcp.SendReceive(s.GetListenedAddress(), sendData, -1)
+    result, err := gtcp.SendRecv(s.GetListenedAddress(), sendData, -1)
     assert.Nil(t, err)
     assert.Equal(t, result, sendData)
 }
@@ -340,7 +340,7 @@ func TestServer_Run(t *testing.T) {
     s := gtcp.NewServer(gtcp.FreePortAddress, func(conn *gtcp.Conn) {
         defer conn.Close()
         for {
-            data, err := conn.Receive(-1)
+            data, err := conn.Recv(-1)
             if err != nil {
                 break
             }
@@ -352,7 +352,7 @@ func TestServer_Run(t *testing.T) {
 
     time.Sleep(simpleTimeout)
 
-    result, err := gtcp.SendReceive(s.GetListenedAddress(), sendData, -1)
+    result, err := gtcp.SendRecv(s.GetListenedAddress(), sendData, -1)
     assert.Nil(t, err)
     assert.Equal(t, result, sendData)
 

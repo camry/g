@@ -16,7 +16,7 @@ func TestPackageBasic(t *testing.T) {
     s := gtcp.NewServer(gtcp.FreePortAddress, func(conn *gtcp.Conn) {
         defer conn.Close()
         for {
-            data, err := conn.ReceivePkg()
+            data, err := conn.RecvPkg()
             if err != nil {
                 break
             }
@@ -48,41 +48,41 @@ func TestPackageBasic(t *testing.T) {
     err2 = conn2.SendPkg(data2)
     assert.NotNil(t, err2)
 
-    // SendReceivePkg
+    // SendRecvPkg
     conn3, err3 := gtcp.NewConn(s.GetListenedAddress())
     assert.Nil(t, err3)
     defer conn3.Close()
     for i := 100; i < 200; i++ {
         data3 := []byte(strconv.Itoa(i))
-        result3, err3 := conn3.SendReceivePkg(data3)
+        result3, err3 := conn3.SendRecvPkg(data3)
         assert.Nil(t, err3)
         assert.Equal(t, result3, data3)
     }
-    // SendReceivePkgWithTimeout
+    // SendRecvPkgWithTimeout
     for i := 100; i < 200; i++ {
         data3 := []byte(strconv.Itoa(i))
-        result3, err3 := conn3.SendReceivePkgWithTimeout(data3, time.Second)
+        result3, err3 := conn3.SendRecvPkgWithTimeout(data3, time.Second)
         assert.Nil(t, err3)
         assert.Equal(t, result3, data3)
     }
 
-    // SendReceivePkg with big data - failure.
+    // SendRecvPkg with big data - failure.
     conn4, err4 := gtcp.NewConn(s.GetListenedAddress())
     assert.Nil(t, err4)
     defer conn4.Close()
     data4 := make([]byte, 65536)
-    result4, err4 := conn4.SendReceivePkg(data4)
+    result4, err4 := conn4.SendRecvPkg(data4)
     assert.NotNil(t, err4)
     assert.Nil(t, result4)
 
-    // SendReceivePkg with big data - success.
+    // SendRecvPkg with big data - success.
     conn5, err5 := gtcp.NewConn(s.GetListenedAddress())
     assert.Nil(t, err5)
     defer conn5.Close()
     data5 := make([]byte, 65500)
     data5[100] = byte(65)
     data5[65400] = byte(85)
-    result5, err5 := conn5.SendReceivePkg(data5)
+    result5, err5 := conn5.SendRecvPkg(data5)
     assert.Nil(t, err5)
     assert.Equal(t, result5, data5)
 }
@@ -92,7 +92,7 @@ func TestPackageBasicHeaderSize1(t *testing.T) {
     s := gtcp.NewServer(gtcp.FreePortAddress, func(conn *gtcp.Conn) {
         defer conn.Close()
         for {
-            data, err := conn.ReceivePkg(gtcp.PkgOption{HeaderSize: 1})
+            data, err := conn.RecvPkg(gtcp.PkgOption{HeaderSize: 1})
             if err != nil {
                 break
             }
@@ -103,12 +103,12 @@ func TestPackageBasicHeaderSize1(t *testing.T) {
     defer s.Close(ctx)
     time.Sleep(100 * time.Millisecond)
 
-    // SendReceivePkg with empty data.
+    // SendRecvPkg with empty data.
     conn, err := gtcp.NewConn(s.GetListenedAddress())
     assert.Nil(t, err)
     defer conn.Close()
     data := make([]byte, 0)
-    result, err := conn.SendReceivePkg(data)
+    result, err := conn.SendRecvPkg(data)
     assert.Nil(t, err)
     assert.Nil(t, result)
 }
@@ -118,7 +118,7 @@ func TestPackageTimeout(t *testing.T) {
     s := gtcp.NewServer(gtcp.FreePortAddress, func(conn *gtcp.Conn) {
         defer conn.Close()
         for {
-            data, err := conn.ReceivePkg()
+            data, err := conn.RecvPkg()
             if err != nil {
                 break
             }
@@ -130,30 +130,30 @@ func TestPackageTimeout(t *testing.T) {
     defer s.Close(ctx)
     time.Sleep(100 * time.Millisecond)
 
-    // SendReceivePkgWithTimeout
+    // SendRecvPkgWithTimeout
     conn1, err1 := gtcp.NewConn(s.GetListenedAddress())
     assert.Nil(t, err1)
     defer conn1.Close()
     data1 := []byte("10000")
-    result1, err1 := conn1.SendReceivePkgWithTimeout(data1, time.Millisecond*500)
+    result1, err1 := conn1.SendRecvPkgWithTimeout(data1, time.Millisecond*500)
     assert.NotNil(t, err1)
     assert.Nil(t, result1)
 
-    // SendReceivePkgWithTimeout
+    // SendRecvPkgWithTimeout
     conn2, err2 := gtcp.NewConn(s.GetListenedAddress())
     assert.Nil(t, err2)
     defer conn2.Close()
     data2 := []byte("10000")
-    result2, err2 := conn2.SendReceivePkgWithTimeout(data2, time.Second*2)
+    result2, err2 := conn2.SendRecvPkgWithTimeout(data2, time.Second*2)
     assert.Nil(t, err2)
     assert.Equal(t, result2, data2)
 
-    // SendReceivePkgWithTimeout
+    // SendRecvPkgWithTimeout
     conn3, err3 := gtcp.NewConn(s.GetListenedAddress())
     assert.Nil(t, err3)
     defer conn3.Close()
     data3 := []byte("10000")
-    result3, err3 := conn3.SendReceivePkgWithTimeout(data3, time.Second*2, gtcp.PkgOption{HeaderSize: 5})
+    result3, err3 := conn3.SendRecvPkgWithTimeout(data3, time.Second*2, gtcp.PkgOption{HeaderSize: 5})
     assert.NotNil(t, err3)
     assert.Nil(t, result3)
 }
@@ -164,7 +164,7 @@ func TestPackageOption(t *testing.T) {
         defer conn.Close()
         option := gtcp.PkgOption{HeaderSize: 1}
         for {
-            data, err := conn.ReceivePkg(option)
+            data, err := conn.RecvPkg(option)
             if err != nil {
                 break
             }
@@ -175,23 +175,23 @@ func TestPackageOption(t *testing.T) {
     defer s.Close(ctx)
     time.Sleep(100 * time.Millisecond)
 
-    // SendReceivePkg with big data - failure.
+    // SendRecvPkg with big data - failure.
     conn1, err1 := gtcp.NewConn(s.GetListenedAddress())
     assert.Nil(t, err1)
     defer conn1.Close()
     data1 := make([]byte, 0xFF+1)
-    result1, err1 := conn1.SendReceivePkg(data1, gtcp.PkgOption{HeaderSize: 1})
+    result1, err1 := conn1.SendRecvPkg(data1, gtcp.PkgOption{HeaderSize: 1})
     assert.NotNil(t, err1)
     assert.Nil(t, result1)
 
-    // SendReceivePkg with big data - success.
+    // SendRecvPkg with big data - success.
     conn2, err2 := gtcp.NewConn(s.GetListenedAddress())
     assert.Nil(t, err2)
     defer conn2.Close()
     data2 := make([]byte, 0xFF)
     data2[100] = byte(65)
     data2[200] = byte(85)
-    result2, err2 := conn2.SendReceivePkg(data2, gtcp.PkgOption{HeaderSize: 1})
+    result2, err2 := conn2.SendRecvPkg(data2, gtcp.PkgOption{HeaderSize: 1})
     assert.Nil(t, err2)
     assert.Equal(t, result2, data2)
 }
@@ -202,7 +202,7 @@ func TestPackageOptionHeadSize3(t *testing.T) {
         defer conn.Close()
         option := gtcp.PkgOption{HeaderSize: 3}
         for {
-            data, err := conn.ReceivePkg(option)
+            data, err := conn.RecvPkg(option)
             if err != nil {
                 break
             }
@@ -213,14 +213,14 @@ func TestPackageOptionHeadSize3(t *testing.T) {
     defer s.Close(ctx)
     time.Sleep(100 * time.Millisecond)
 
-    // SendReceivePkg
+    // SendRecvPkg
     conn, err := gtcp.NewConn(s.GetListenedAddress())
     assert.Nil(t, err)
     defer conn.Close()
     data := make([]byte, 0xFF)
     data[100] = byte(65)
     data[200] = byte(85)
-    result, err := conn.SendReceivePkg(data, gtcp.PkgOption{HeaderSize: 3})
+    result, err := conn.SendRecvPkg(data, gtcp.PkgOption{HeaderSize: 3})
     assert.Nil(t, err)
     assert.Equal(t, result, data)
 }
@@ -231,7 +231,7 @@ func Test_Package_Option_HeadSize4(t *testing.T) {
         defer conn.Close()
         option := gtcp.PkgOption{HeaderSize: 4}
         for {
-            data, err := conn.ReceivePkg(option)
+            data, err := conn.RecvPkg(option)
             if err != nil {
                 break
             }
@@ -241,22 +241,22 @@ func Test_Package_Option_HeadSize4(t *testing.T) {
     go s.Run(ctx)
     defer s.Close(ctx)
     time.Sleep(100 * time.Millisecond)
-    // SendReceivePkg with big data - failure.
+    // SendRecvPkg with big data - failure.
     conn1, err1 := gtcp.NewConn(s.GetListenedAddress())
     assert.Nil(t, err1)
     defer conn1.Close()
     data1 := make([]byte, 0xFFFF+1)
-    _, err1 = conn1.SendReceivePkg(data1, gtcp.PkgOption{HeaderSize: 4})
+    _, err1 = conn1.SendRecvPkg(data1, gtcp.PkgOption{HeaderSize: 4})
     assert.Nil(t, err1)
 
-    // SendReceivePkg with big data - success.
+    // SendRecvPkg with big data - success.
     conn2, err2 := gtcp.NewConn(s.GetListenedAddress())
     assert.Nil(t, err2)
     defer conn2.Close()
     data2 := make([]byte, 0xFF)
     data2[100] = byte(65)
     data2[200] = byte(85)
-    result2, err2 := conn2.SendReceivePkg(data2, gtcp.PkgOption{HeaderSize: 4})
+    result2, err2 := conn2.SendRecvPkg(data2, gtcp.PkgOption{HeaderSize: 4})
     assert.Nil(t, err2)
     assert.Equal(t, result2, data2)
 
@@ -267,17 +267,17 @@ func Test_Package_Option_HeadSize4(t *testing.T) {
     data3 := make([]byte, 0xFF)
     data3[100] = byte(65)
     data3[200] = byte(85)
-    _, err3 = conn3.SendReceivePkg(data3, gtcp.PkgOption{HeaderSize: 5})
+    _, err3 = conn3.SendRecvPkg(data3, gtcp.PkgOption{HeaderSize: 5})
     assert.NotNil(t, err3)
 }
 
-func TestConnReceivePkgError(t *testing.T) {
+func TestConnRecvPkgError(t *testing.T) {
     ctx := context.Background()
     s := gtcp.NewServer(gtcp.FreePortAddress, func(conn *gtcp.Conn) {
         defer conn.Close()
         option := gtcp.PkgOption{HeaderSize: 5}
         for {
-            _, err := conn.ReceivePkg(option)
+            _, err := conn.RecvPkg(option)
             if err != nil {
                 break
             }
@@ -292,7 +292,7 @@ func TestConnReceivePkgError(t *testing.T) {
     assert.Nil(t, err)
     defer conn.Close()
     data := make([]byte, 65536)
-    result, err := conn.SendReceivePkg(data)
+    result, err := conn.SendRecvPkg(data)
     assert.NotNil(t, err)
     assert.Nil(t, result)
 }
