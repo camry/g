@@ -4,7 +4,7 @@ import (
     "testing"
     "time"
 
-    "github.com/camry/g/gmath/grand"
+    "github.com/camry/g/v2/gmath/grand"
 )
 
 // go test -bench=BenchmarkGRand_RangeInt -benchmem -count=10

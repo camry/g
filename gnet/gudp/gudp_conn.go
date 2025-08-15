@@ -5,7 +5,7 @@ import (
     "net"
     "time"
 
-    "github.com/camry/g/gerrors/gerror"
+    "github.com/camry/g/v2/gerrors/gerror"
 )
 
 // localConn 对 UDP 连接提供公共操作。

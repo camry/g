@@ -3,7 +3,7 @@ package grand
 import (
     "math/rand"
 
-    "github.com/camry/g/gos/mutex"
+    "github.com/camry/g/v2/gos/mutex"
 )
 
 type GRand struct {

@@ -6,7 +6,7 @@ import (
     "sync"
     "time"
 
-    "github.com/camry/g/glog"
+    "github.com/camry/g/v2/glog"
 )
 
 // Cron 跟踪任意数量的条目，调用调度指定的关联函数。

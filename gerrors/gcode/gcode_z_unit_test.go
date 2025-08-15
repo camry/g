@@ -5,7 +5,7 @@ import (
 
     "github.com/stretchr/testify/assert"
 
-    "github.com/camry/g/gerrors/gcode"
+    "github.com/camry/g/v2/gerrors/gcode"
 )
 
 func TestNew(t *testing.T) {

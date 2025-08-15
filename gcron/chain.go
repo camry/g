@@ -5,7 +5,7 @@ import (
     "sync"
     "time"
 
-    "github.com/camry/g/glog"
+    "github.com/camry/g/v2/glog"
 )
 
 // JobWrapper 用一些行为装饰指定的 Job。

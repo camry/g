@@ -6,7 +6,7 @@ import (
     "github.com/samber/lo"
     "github.com/stretchr/testify/assert"
 
-    "github.com/camry/g/gmath/grand"
+    "github.com/camry/g/v2/gmath/grand"
 )
 
 func TestGRand_RangeInt(t *testing.T) {

@@ -1,7 +1,7 @@
 package gerror
 
 import (
-    "github.com/camry/g/gerrors/gcode"
+    "github.com/camry/g/v2/gerrors/gcode"
 )
 
 // Code 获取错误码。

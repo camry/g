@@ -8,7 +8,7 @@ import (
     "net"
     "time"
 
-    "github.com/camry/g/gerrors/gerror"
+    "github.com/camry/g/v2/gerrors/gerror"
 )
 
 // Conn TCP 连接对象。

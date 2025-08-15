@@ -4,7 +4,7 @@ import (
     "fmt"
     "strings"
 
-    "github.com/camry/g/gerrors/gcode"
+    "github.com/camry/g/v2/gerrors/gcode"
 )
 
 // NewCode 用于创建一个自定义错误信息的 error 对象，并包含堆栈信息，并增加错误码对象的输入。

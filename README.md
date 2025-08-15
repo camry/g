@@ -4,7 +4,7 @@ g 包核心组件。
 
 ## License
 
-Dove 框架开源许可证 [MIT LICENSE](https://github.com/camry/g/blob/main/LICENSE)
+Dove 框架开源许可证 [MIT LICENSE](https://github.com/camry/g/v2/blob/main/LICENSE)
 
 ## 致谢
 

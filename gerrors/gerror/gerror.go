@@ -1,7 +1,7 @@
 package gerror
 
 import (
-    "github.com/camry/g/gerrors/gcode"
+    "github.com/camry/g/v2/gerrors/gcode"
 )
 
 // IIs Is 接口。
@@ -48,7 +48,7 @@ type IUnwrap interface {
 
 const (
     // stackFilterKeyForG 过滤 G 模块路径堆栈。
-    stackFilterKeyForG = "github.com/camry/g/"
+    stackFilterKeyForG = "github.com/camry/g/v2/"
 
     // separatorSpace 空间分隔符。
     separatorSpace = ", "

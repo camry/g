@@ -3,7 +3,7 @@ package gudp
 import (
     "net"
 
-    "github.com/camry/g/gerrors/gerror"
+    "github.com/camry/g/v2/gerrors/gerror"
 )
 
 // NewNetConn 创建并返回指定地址的 *net.UDPConn。

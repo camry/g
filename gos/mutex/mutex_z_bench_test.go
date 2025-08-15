@@ -3,7 +3,7 @@ package mutex_test
 import (
     "testing"
 
-    "github.com/camry/g/gos/mutex"
+    "github.com/camry/g/v2/gos/mutex"
 )
 
 var (

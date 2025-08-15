@@ -8,8 +8,8 @@ import (
     "strings"
     "sync"
 
-    "github.com/camry/g/gerrors/gcode"
-    "github.com/camry/g/gerrors/gerror"
+    "github.com/camry/g/v2/gerrors/gcode"
+    "github.com/camry/g/v2/gerrors/gerror"
 )
 
 const (

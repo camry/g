@@ -3,7 +3,7 @@ package gcron
 import (
     "time"
 
-    "github.com/camry/g/glog"
+    "github.com/camry/g/v2/glog"
 )
 
 // Option 表示对 Cron 的默认行为的修改。

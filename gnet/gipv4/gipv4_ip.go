@@ -5,7 +5,7 @@ import (
     "strconv"
     "strings"
 
-    "github.com/camry/g/gerrors/gerror"
+    "github.com/camry/g/v2/gerrors/gerror"
 )
 
 // GetIpArray retrieves and returns all the ip of current host.

@@ -6,7 +6,7 @@ import (
     "runtime"
     "strings"
 
-    "github.com/camry/g/gerrors/gcode"
+    "github.com/camry/g/v2/gerrors/gcode"
 )
 
 // Error 自定义错误对象。

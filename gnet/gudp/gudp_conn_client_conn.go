@@ -4,7 +4,7 @@ import (
     "io"
     "time"
 
-    "github.com/camry/g/gerrors/gerror"
+    "github.com/camry/g/v2/gerrors/gerror"
 )
 
 // ClientConn 客户端连接。

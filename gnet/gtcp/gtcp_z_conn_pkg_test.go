@@ -8,7 +8,7 @@ import (
 
     "github.com/stretchr/testify/assert"
 
-    "github.com/camry/g/gnet/gtcp"
+    "github.com/camry/g/v2/gnet/gtcp"
 )
 
 func TestPackageBasic(t *testing.T) {

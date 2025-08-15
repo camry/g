@@ -5,7 +5,7 @@ import (
 
     "github.com/stretchr/testify/assert"
 
-    "github.com/camry/g/gnet/gtcp"
+    "github.com/camry/g/v2/gnet/gtcp"
 )
 
 func TestGetFreePort(t *testing.T) {

@@ -6,7 +6,7 @@ import (
     "testing"
     "time"
 
-    "github.com/camry/g/glog"
+    "github.com/camry/g/v2/glog"
 )
 
 func TestWithLocation(t *testing.T) {

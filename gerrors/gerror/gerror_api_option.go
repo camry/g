@@ -1,6 +1,6 @@
 package gerror
 
-import "github.com/camry/g/gerrors/gcode"
+import "github.com/camry/g/v2/gerrors/gcode"
 
 // Option 自定义的错误创建。
 type Option struct {

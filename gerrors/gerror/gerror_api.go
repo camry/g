@@ -3,7 +3,7 @@ package gerror
 import (
     "fmt"
 
-    "github.com/camry/g/gerrors/gcode"
+    "github.com/camry/g/v2/gerrors/gcode"
 )
 
 // New 用于创建一个自定义文本错误信息的 error 对象，并包含堆栈信息。

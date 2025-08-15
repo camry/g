@@ -5,7 +5,7 @@ import (
 
     "github.com/stretchr/testify/assert"
 
-    "github.com/camry/g/encoding/ghash"
+    "github.com/camry/g/v2/encoding/ghash"
 )
 
 var (

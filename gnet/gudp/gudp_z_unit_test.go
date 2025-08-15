@@ -16,8 +16,8 @@ import (
 
     "github.com/stretchr/testify/assert"
 
-    "github.com/camry/g/glog"
-    "github.com/camry/g/gnet/gudp"
+    "github.com/camry/g/v2/glog"
+    "github.com/camry/g/v2/gnet/gudp"
 )
 
 var (

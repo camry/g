@@ -6,7 +6,7 @@ import (
 
     "github.com/stretchr/testify/assert"
 
-    "github.com/camry/g/gos/rwmutex"
+    "github.com/camry/g/v2/gos/rwmutex"
 )
 
 func TestRWMutexIsSafe(t *testing.T) {

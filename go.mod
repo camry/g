@@ -1,4 +1,4 @@
-module github.com/camry/g
+module github.com/camry/g/v2
 
 go 1.24.0
 

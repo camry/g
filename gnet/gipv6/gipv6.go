@@ -1,7 +1,7 @@
 package gipv6
 
 import (
-    "github.com/camry/g/gtext/gregex"
+    "github.com/camry/g/v2/gtext/gregex"
 )
 
 // Validate checks whether given `ip` a valid IPv6 address.

@@ -3,7 +3,7 @@ package gipv4
 import (
     "net"
 
-    "github.com/camry/g/gerrors/gerror"
+    "github.com/camry/g/v2/gerrors/gerror"
 )
 
 // GetMac retrieves and returns the first mac address of current host.
