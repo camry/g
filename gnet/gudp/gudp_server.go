@@ -1,6 +1,7 @@
 package gudp
 
 import (
+    "context"
     "fmt"
     "net"
     "strings"
@@ -58,7 +59,7 @@ func (s *Server) SetHandler(handler ServerHandler) {
 
 // Close 关闭连接。
 // 它将使服务器立即关闭。
-func (s *Server) Close() (err error) {
+func (s *Server) Close(ctx context.Context) (err error) {
     s.mu.Lock()
     defer s.mu.Unlock()
     err = s.conn.Close()
@@ -69,7 +70,7 @@ func (s *Server) Close() (err error) {
 }
 
 // Run 开始监听UDP连接。
-func (s *Server) Run() error {
+func (s *Server) Run(ctx context.Context) error {
     if s.handler == nil {
         return gerror.NewCode(
             gcode.CodeMissingConfiguration,

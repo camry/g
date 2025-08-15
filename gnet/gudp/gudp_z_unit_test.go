@@ -41,7 +41,7 @@ func startUDPServer(addr string) *gudp.Server {
             }
         }
     })
-    go s.Run()
+    go s.Run(context.Background())
     time.Sleep(simpleTimeout)
     return s
 }
@@ -62,8 +62,8 @@ func Test_Basic(t *testing.T) {
             }
         }
     })
-    go s.Run()
-    defer s.Close()
+    go s.Run(ctx)
+    defer s.Close(ctx)
 
     time.Sleep(100 * time.Millisecond)
 
@@ -112,8 +112,8 @@ func Test_Buffer(t *testing.T) {
             }
         }
     })
-    go s.Run()
-    defer s.Close()
+    go s.Run(ctx)
+    defer s.Close(ctx)
     time.Sleep(100 * time.Millisecond)
 
     result, err := gudp.SendRecv(s.GetListenedAddress(), []byte("123"), -1)
