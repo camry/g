@@ -2,6 +2,12 @@
 
 g 包核心组件。
 
+## 安装
+
+```bash
+go get -u github.com/camry/g/v2
+```
+
 ## License
 
 G 开源许可证 [MIT LICENSE](https://github.com/camry/g/blob/main/LICENSE)
