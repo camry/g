@@ -22,7 +22,7 @@ func NewStdLogger(w io.Writer) Logger {
         w:         w,
         isDiscard: w == io.Discard,
         pool: &sync.Pool{
-            New: func() interface{} {
+            New: func() any {
                 return new(bytes.Buffer)
             },
         },

@@ -150,7 +150,7 @@ func TestFilterWithContext(t *testing.T) {
     ctxValue := "filter test value"
 
     v1 := func() Valuer {
-        return func(ctx context.Context) interface{} {
+        return func(ctx context.Context) any {
             return ctx.Value(ctxKey)
         }
     }
