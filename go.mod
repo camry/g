@@ -1,6 +1,6 @@
 module github.com/camry/g/v2
 
-go 1.25.0
+go 1.25.6
 
 require (
 	github.com/samber/lo v1.53.0
